@@ -13,8 +13,10 @@ export default function TaskProgress() {
   const [dueDate, setDueDate] = useState([])
   const [assignTo, setAssignTo] = useState([])
   const [specificData, setSpecificData] = useState(null)
+  const [doingData, setDoingData] = useState([]);
   const [showModal, setShowModal] = React.useState(false)
   const [todoData, setTodoData] = useState([])
+  const [done,setDone]=useState([]);
   const Firebase = UseFirebase()
   const url = window.location.href.split('/')
   const documentId = url.pop()
@@ -23,11 +25,21 @@ export default function TaskProgress() {
 
   // Firebase
 
-  useEffect(() => {
-    Firebase.getTodos(documentId).then((item) => {
-      setTodoData(item.docs)
-      // console.log(todoData.data())
-    }, [])
+  // ==========================================
+useEffect(()=>{
+Firebase.getTodos(documentId).then((item)=>{
+  setTodoData(item.docs)
+})
+Firebase.getDoing(documentId).then((item)=>{
+  setDoingData(item.docs)
+})
+Firebase.DoneData(documentId).then((item)=>{
+  setDone(item.docs)
+})
+},[documentId,todoData,doingData,done])
+// ===================================
+
+
 
     const documentRef = doc(Firebase.db, 'Board', documentId) // 'Board' is the collection name
 
@@ -44,7 +56,7 @@ export default function TaskProgress() {
       .catch((error) => {
         console.error('Error getting document:', error)
       })
-  }, [documentId])
+ 
 
   const handleForm = (e) => {
     e.preventDefault()
@@ -64,6 +76,7 @@ export default function TaskProgress() {
     setDueDate('')
     // console.log(task, description, startingDate, dueDate, assignTo)
   }
+  
 
   return (
     <>
@@ -86,33 +99,121 @@ export default function TaskProgress() {
                   {specificData.ProjectType}
                 </p>
               </div>
-              <div className='grid grid-cols-3 bg-white max-w-5xl mx-auto text-lg font-semibold '>
-                <div className=' border p-2 '>
-                  <div className=' border p-2'> Start </div>
+              <div className='grid grid-cols-3 gap-5 max-w-5xl mx-auto text-lg font-semibold '>
+                <div className=' border p-2  bg-white'>
+                  <div className=' border p-2 bg-blue-900 text-white text-center border-white'> Start </div>
 
                   <ul>
                     {todoData.map((item) => {
                       return (
-                        <li>
-                          <button
-                            onClick={() => Firebase.clearTodos(item.data)}
-                          >
-                            Delete
-                          </button>
-                          {item.data().task}
-                        </li>
+                        
+                        
+                        <div className='mt-3  shadow border bg-blue-100'>
+                            <p className='bg-blue-900 w-full  p-1 text-center text-white  '>
+                              <span className='font-bold   py-4 '>Task :  </span>{item.data().task}
+                            </p>
+                           <div className='p-4'>
+                           <p className='flex justify-between border-b'>
+                              <span>To : </span> <span>
+                              {item.data().assignTo}
+                              </span>
+                            </p>
+                            <div className='flex justify-between my-2 border-b'>
+                              <span>
+                                {item.data().startingDate}
+                              </span>
+                              <span>-</span>
+                              <span>
+                                {item.data().dueDate}
+                              </span>
+                            </div>
+                            <button className='' onClick={()=>Firebase.clearTodos(documentId,item)}>➡</button>
+                           </div>
+                            
+                          </div>
                       )
                     })}
                   </ul>
                   <button
-                    className='text-3xl border p-2 float-right '
+                    className='text-3xl text-blue-900 border p-2 float-right '
                     onClick={() => setShowModal(true)}
                   >
                     <AiFillPlusSquare />
                   </button>
                 </div>
-                <div className='border p-2'> doing</div>
-                <div className='border p-2'> Done</div>
+                <div className=' border p-2  bg-white'>
+                  <div className=' border p-2 bg-blue-900 text-white text-center border-white'> Doing </div>
+
+                  <ul>
+                    {doingData.map((item) => {
+                      return (
+                        
+                        
+                        <div className='mt-3  shadow border bg-blue-100'>
+                            <p className='bg-blue-900 w-full  p-1 text-center text-white  '>
+                              {item.data().task}
+                            </p>
+                           <div className='p-4'>
+                           <p className='flex justify-between border-b'>
+                               <span>
+                              {item.data().assignTo}
+                              </span>
+                            </p>
+                            <div className='flex justify-between my-2 border-b'>
+                              <span>
+                                {item.data().startingDate}
+                              </span>
+                              <span>-</span>
+                              <span>
+                                {item.data().dueDate}
+                              </span>
+                            </div>
+                            <button className='' onClick={()=>Firebase.movetoDone(documentId,item)}>➡</button>
+                           </div>
+                            
+                          </div>
+                      )
+                    })}
+                  </ul>
+
+                </div>
+                <div className=' border p-2  bg-white'>
+                  <div className=' border p-2 bg-blue-900 text-white text-center border-white'> Done </div>
+
+                  <ul>
+                    {done.map((item) => {
+                      return (
+                        
+                        
+                        <div className='mt-3  shadow border bg-blue-100'>
+                            <p className='bg-blue-900 w-full  p-1 text-center text-white  '>
+                              <span className='font-bold   py-4 '>Task :  </span>{item.data().task}
+                            </p>
+                           <div className='p-4'>
+                           <p className='flex justify-between border-b'>
+                              <span>To : </span> <span>
+                              {item.data().DoneBy}
+                              </span>
+                            </p>
+                            <div className='flex justify-between my-2 border-b'>
+                              <span>
+                                {item.data().dueDate}
+                              </span>
+                              <span>-</span>
+                              <span>
+                                {item.data().dueDate}
+                              </span>
+                            </div>
+                            <button className='text-green-600' onClick={()=>Firebase.clearTodos(documentId,item)}>✔ Completed</button>
+                           </div>
+                            
+                          </div>
+                      )
+                    })}
+                  </ul>
+
+                </div>
+               
               </div>
             </div>
           ) : (

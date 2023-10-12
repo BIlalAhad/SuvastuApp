@@ -202,19 +202,58 @@ export const FirebaseProvider = (props) => {
   // get data from document sub-collection
   const getTodos = async (documentId) => {
     const documentReference = doc(db, 'Board', documentId)
-    const collectionReference = collection(documentReference, 'todo')
-    const querySnapshot = await getDocs(collectionReference)
-    
+    const collectionReference = collection(documentReference, 'todo' )
+    const querySnapshot = await getDocs(collectionReference) 
     return querySnapshot
-  }
-  
-  const clearTodos = async (documentId) => {
-    const documentReference = doc(db, 'Board', documentId)
-    const collectionReference = collection(documentReference, 'todo')
-    const querySnapshot = await getDocs(collectionReference)
+  } 
+ 
+  // move data from one collection to another collection
+  const clearTodos = async (documentId,item) => {
+    console.log(item.id)
+    const collectionRef = collection(db, 'Board', documentId, 'doing')
+    const result = await addDoc(collectionRef, {
+    task:item.data().task,
+    assignTo:item.data().assignTo,
+    description:item.data().description,
+    startingdate:item.data().startingDate,
+    dueDate:item.data().dueDate,
+    })
     
-    await deleteDoc(doc(db, 'Board', documentId))
+    await deleteDoc(doc(db, 'Board', documentId,'todo' ,item.id))
   }
+
+  // move data from one collection to another collection
+  const movetoDone = async (documentId,items) => {
+    console.log(items)
+    const collectionRef = collection(db, 'Board', documentId, 'done')
+    const result = await addDoc(collectionRef, {
+      task:items.data().task,
+      DoneBy:items.data().assignTo,
+      description:items.data().description,
+      dueDate:items.data().dueDate
+     
+    })
+    
+    await deleteDoc(doc(db, 'Board', documentId,'doing' ,items.id))
+  }
+
+  
+   // get data from document sub-collection
+   const getDoing = async (documentId) => {
+    const documentReference = doc(db, 'Board', documentId)
+    const collectionReference = collection(documentReference, 'doing' )
+    const querySnapshot = await getDocs(collectionReference) 
+    return querySnapshot
+  } 
+
+   // get data from document sub-collection
+   const DoneData = async (documentId) => {
+    const documentReference = doc(db, 'Board', documentId)
+    const collectionReference = collection(documentReference, 'done' )
+    const querySnapshot = await getDocs(collectionReference) 
+    return querySnapshot
+  } 
+
 
   const listAllCV = () => {
     return getDocs(collection(db, 'CV'))
@@ -317,7 +356,10 @@ export const FirebaseProvider = (props) => {
         posttask,
         deleteEmploy,
         getTodos,
-        clearTodos
+        clearTodos,
+        getDoing,
+        movetoDone,
+        DoneData,
       }}
     >
       {props.children}
