@@ -40,13 +40,17 @@ export default function AddTeamMembers() {
   useEffect(() => {
     Firebase.listAllMembers().then((item) => {
       setMember(item.docs)
+      console.log(member)
     })
-  }, [member])
+  }, [])
   return (
     <>
       <section className='sm:flex '>
         <DashboardSidebar />
+
         <div className=' mr-5  w-full'>
+          
+
           {/* model */}
           <div id='form' className=''>
             {showModal ? (

@@ -12,7 +12,8 @@ export default function Projects() {
   }
   useEffect(() => {
     Firebase.listProject().then((item) => setData(item.docs))
-  })
+    console.log(data)
+  },[])
   return (
     <>
       <div className='flex'>

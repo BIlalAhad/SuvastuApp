@@ -1,4 +1,4 @@
-import { initializeApp } from 'firebase/app'
+import { initializeApp } from "firebase/app";
 import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
@@ -6,7 +6,7 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithPopup,
-} from 'firebase/auth'
+} from "firebase/auth";
 import {
   addDoc,
   collection,
@@ -16,93 +16,102 @@ import {
   getDocs,
   getFirestore,
   setDoc,
-} from 'firebase/firestore'
-import { getStorage, ref, uploadBytes } from 'firebase/storage'
-import jsPDF from 'jspdf'
-import React, { createContext, useContext, useEffect, useState } from 'react'
+} from "firebase/firestore";
+import { getStorage, ref, uploadBytes } from "firebase/storage";
+import jsPDF from "jspdf";
+import React, { createContext, useContext, useEffect, useState } from "react";
 // import UserID from 'UserID';
 
-export const FirebaseContext = createContext(null)
-export const UseFirebase = () => useContext(FirebaseContext)
+export const FirebaseContext = createContext(null);
+export const UseFirebase = () => useContext(FirebaseContext);
+// const firebaseConfig = {
+//   apiKey: "AIzaSyDHBgbXifApU9CnGbsuSAqU-Jqrq14eHDI",
+//   authDomain: "test-e8e47.firebaseapp.com",
+//   projectId: "test-e8e47",
+//   storageBucket: "test-e8e47.appspot.com",
+//   messagingSenderId: "367649107386",
+//   appId: "1:367649107386:web:53e40c4ab4af7437dc8183",
+//   measurementId: "G-0L44XDR2PS"
+// };
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyBKRm9Z97Tl-rHncqlSKfvcxDy4eLsp5TU',
-  authDomain: 'suvastutech-1e3c4.firebaseapp.com',
-  projectId: 'suvastutech-1e3c4',
-  storageBucket: 'suvastutech-1e3c4.appspot.com',
-  messagingSenderId: '720367525810',
-  appId: '1:720367525810:web:55d34f5e2d9396360bceab',
-  measurementId: 'G-6L5LNQ79CS',
-}
+  apiKey: "AIzaSyBKRm9Z97Tl-rHncqlSKfvcxDy4eLsp5TU",
+  authDomain: "suvastutech-1e3c4.firebaseapp.com",
+  projectId: "suvastutech-1e3c4",
+  storageBucket: "suvastutech-1e3c4.appspot.com",
+  messagingSenderId: "720367525810",
+  appId: "1:720367525810:web:55d34f5e2d9396360bceab",
+  measurementId: "G-6L5LNQ79CS",
+};
 // let ID = (new UserID()).getID();
-const firebaseapp = initializeApp(firebaseConfig)
-const storage = getStorage(firebaseapp)
-const db = getFirestore(firebaseapp)
-const FirebaseAuth = getAuth(firebaseapp)
-const provider = new GoogleAuthProvider()
+const firebaseapp = initializeApp(firebaseConfig);
+const storage = getStorage(firebaseapp);
+const db = getFirestore(firebaseapp);
+const FirebaseAuth = getAuth(firebaseapp);
+const provider = new GoogleAuthProvider();
 // const firestore = db;
 export const FirebaseProvider = (props) => {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null);
   useEffect(() => {
     onAuthStateChanged(FirebaseAuth, (user) => {
       if (user) {
-        setUser(user)
+        setUser(user);
         // console.log(user.email)
       } else {
-        setUser(null)
+        setUser(null);
       }
-    })
-  }, [])
-  const isLoggedIn = user ? true : false
+    });
+  }, []);
+  const isLoggedIn = user ? true : false;
 
   const SignupUserWithEmailAndPassword = async (email, password) => {
     return createUserWithEmailAndPassword(FirebaseAuth, email, password)
       .then((value) => {
-        alert('successfully Signup')
+        alert("successfully Signup");
       })
       .catch((err) => {
-        alert('failed')
-      })
-  }
+        alert("failed");
+      });
+  };
   const SignInWithGoogle = () => {
     signInWithPopup(FirebaseAuth, provider)
       .then((result) => {
-        const credential = GoogleAuthProvider.credentialFromResult(result)
-        const token = credential.accessToken
-        const user = result.user
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        const user = result.user;
       })
       .catch((error) => {
-        const errorCode = error.code
-        const errorMessage = error.message
-        const email = error.customData.email
-        const credential = GoogleAuthProvider.credentialFromError(error)
-      })
-  }
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        const email = error.customData.email;
+        const credential = GoogleAuthProvider.credentialFromError(error);
+      });
+  };
   const SigninUserWithEmailAndPassword = (email, password) => {
     return signInWithEmailAndPassword(FirebaseAuth, email, password)
       .then((value) => {
-        alert('successfully Login')
+        alert("successfully Login");
       })
       .catch((err) => {
-        alert('failed')
-      })
-  }
+        alert("failed");
+      });
+  };
   const AddEmploy = async (employname, employemail, employrank, employimg) => {
-    const imageRef = ref(storage, `${Date.now()}${employimg.name}`)
-    const uploadResult = await uploadBytes(imageRef, employimg)
-    const docRef = await addDoc(collection(db, 'TeamMembers'), {
+    const imageRef = ref(storage, `${Date.now()}${employimg.name}`);
+    const uploadResult = await uploadBytes(imageRef, employimg);
+    const docRef = await addDoc(collection(db, "TeamMembers"), {
       employname,
       employemail,
       employrank,
       imageURL: uploadResult.ref.fullPath,
-    })
-    alert('success')
-  }
+    });
+    alert("success");
+  };
   const uploadLogo = async (Logo) => {
-    const docRef = await addDoc(collection(db, 'Logo'), {
+    const docRef = await addDoc(collection(db, "Logo"), {
       Logo,
-    })
-  }
+    });
+  };
   const postjob = async (
     jobtitle,
     jobDescription,
@@ -114,7 +123,7 @@ export const FirebaseProvider = (props) => {
     gender,
     country
   ) => {
-    const docRef = await addDoc(collection(db, 'PostJobs'), {
+    const docRef = await addDoc(collection(db, "PostJobs"), {
       jobtitle,
       jobDescription,
       skills,
@@ -124,9 +133,9 @@ export const FirebaseProvider = (props) => {
       jobshift,
       gender,
       country,
-    })
-    alert('success')
-  }
+    });
+    alert("success");
+  };
   const PostApplicent = async (
     name,
     fname,
@@ -139,7 +148,7 @@ export const FirebaseProvider = (props) => {
     email,
     ApplyFor
   ) => {
-    const docRef = await addDoc(collection(db, 'CV'), {
+    const docRef = await addDoc(collection(db, "CV"), {
       name,
       fname,
       location,
@@ -150,34 +159,73 @@ export const FirebaseProvider = (props) => {
       phone,
       email,
       ApplyFor,
-    })
-    alert('success')
-  }
+    });
+    alert("success");
+  };
+  // const PostProjectTeam = async (
+  //   projectname,
+  //   ProjectDuration,
+  //   ProjectType,
+  //   Description,
+  //   teamMembersEmail
+  // ) => {
+  //   console.log(teamMembersEmail)
+  //   const docRef = await addDoc(collection(db, "Board"), {
+  //     projectname,
+  //     ProjectDuration,
+  //     ProjectType,
+  //     Description,
+  //   });
+  //   // console.log(teamMembersEmail)
+  //   const documentId = docRef.id;
+
+  //   // console.log('Document ID:', documentId)
+
+  //   alert("success");
+  //   await setDoc(doc(db, "Board", documentId), {
+  //     documentId,
+  //     projectname,
+  //     ProjectDuration,
+  //     ProjectType,
+  //     Description,
+  //     teamMembersEmail
+  //   });
+  //   console.log(teamMembersEmail)
+  // };
   const PostProjectTeam = async (
     projectname,
     ProjectDuration,
     ProjectType,
-    Description
-  ) => {
-    const docRef = await addDoc(collection(db, 'Board'), {
+    Description,
+    teamMembersEmail
+    ) => {
+    // console.log("teamMembersEmail before posting:", teamMembersEmail);
+    // console.log(teamMembersEmail);
+  
+    const docRef = await addDoc(collection(db, "Board"), {
       projectname,
       ProjectDuration,
       ProjectType,
       Description,
-    })
-    const documentId = docRef.id
-
-    // console.log('Document ID:', documentId)
-
-    alert('success')
-    await setDoc(doc(db, 'Board', documentId), {
+      teamMembersEmail // Include teamMembersEmail in the Firestore document
+    });
+  
+    const documentId = docRef.id;
+  
+    alert("Success");
+  
+    await setDoc(doc(db, "Board", documentId), {
       documentId,
       projectname,
       ProjectDuration,
       ProjectType,
       Description,
-    })
-  }
+      teamMembersEmail 
+    });
+  
+    console.log(teamMembersEmail);
+  };
+  
 
   // sublevel collection
 
@@ -189,142 +237,136 @@ export const FirebaseProvider = (props) => {
     startingDate,
     dueDate
   ) => {
-    const collectionRef = collection(db, 'Board', documentId, 'todo')
+    const collectionRef = collection(db, "Board", documentId, "todo");
     const result = await addDoc(collectionRef, {
       description,
       assignTo,
       startingDate,
       dueDate,
       task,
-    })
-  }
+    });
+  };
 
   // get data from document sub-collection
   const getTodos = async (documentId) => {
-    const documentReference = doc(db, 'Board', documentId)
-    const collectionReference = collection(documentReference, 'todo' )
-    const querySnapshot = await getDocs(collectionReference) 
-    return querySnapshot
-  } 
- 
-  // move data from one collection to another collection
-  const clearTodos = async (documentId,item) => {
-    console.log(item.id)
-    const collectionRef = collection(db, 'Board', documentId, 'doing')
-    const result = await addDoc(collectionRef, {
-    task:item.data().task,
-    assignTo:item.data().assignTo,
-    description:item.data().description,
-    startingdate:item.data().startingDate,
-    dueDate:item.data().dueDate,
-    })
-    
-    await deleteDoc(doc(db, 'Board', documentId,'todo' ,item.id))
-  }
+    const documentReference = doc(db, "Board", documentId);
+    const collectionReference = collection(documentReference, "todo");
+    const querySnapshot = await getDocs(collectionReference);
+    return querySnapshot;
+  };
 
   // move data from one collection to another collection
-  const movetoDone = async (documentId,items) => {
-    console.log(items)
-    const collectionRef = collection(db, 'Board', documentId, 'done')
+  const clearTodos = async (documentId, item) => {
+    console.log(item.id);
+    const collectionRef = collection(db, "Board", documentId, "doing");
     const result = await addDoc(collectionRef, {
-      task:items.data().task,
-      DoneBy:items.data().assignTo,
-      description:items.data().description,
-      dueDate:items.data().dueDate
+      task: item.data().task,
+      assignTo: item.data().assignTo,
+      description: item.data().description,
+      startingdate: item.data().startingDate,
+      dueDate: item.data().dueDate,
+    });
+
+    await deleteDoc(doc(db, "Board", documentId, "todo", item.id));
+  };
+
+  // move data from one collection to another collection
+  const movetoDone = async (documentId, items) => {
+    console.log(items);
+    const collectionRef = collection(db, "Board", documentId, "done");
+    const result = await addDoc(collectionRef, {
+      task: items.data().task,
+      DoneBy: items.data().assignTo,
+      description: items.data().description,
+      dueDate: items.data().dueDate,
      
-    })
-    
-    await deleteDoc(doc(db, 'Board', documentId,'doing' ,items.id))
-  }
+    });
 
-  
-   // get data from document sub-collection
-   const getDoing = async (documentId) => {
-    const documentReference = doc(db, 'Board', documentId)
-    const collectionReference = collection(documentReference, 'doing' )
-    const querySnapshot = await getDocs(collectionReference) 
-    return querySnapshot
-  } 
+    await deleteDoc(doc(db, "Board", documentId, "doing", items.id));
+  };
 
-   // get data from document sub-collection
-   const DoneData = async (documentId) => {
-    const documentReference = doc(db, 'Board', documentId)
-    const collectionReference = collection(documentReference, 'done' )
-    const querySnapshot = await getDocs(collectionReference) 
-    return querySnapshot
-  } 
+  // get data from document sub-collection
+  const getDoing = async (documentId) => {
+    const documentReference = doc(db, "Board", documentId);
+    const collectionReference = collection(documentReference, "doing");
+    const querySnapshot = await getDocs(collectionReference);
+    return querySnapshot;
+  };
 
+  // get data from document sub-collection
+  const DoneData = async (documentId) => {
+    const documentReference = doc(db, "Board", documentId);
+    const collectionReference = collection(documentReference, "done");
+    const querySnapshot = await getDocs(collectionReference);
+    return querySnapshot;
+  };
 
   const listAllCV = () => {
-    return getDocs(collection(db, 'CV'))
-  }
+    return getDocs(collection(db, "CV"));
+  };
   const listAllJobs = () => {
-    return getDocs(collection(db, 'PostJobs'))
-  }
+    return getDocs(collection(db, "PostJobs"));
+  };
   const listAllMembers = () => {
-    return getDocs(collection(db, 'TeamMembers'))
-  }
+    return getDocs(collection(db, "TeamMembers"));
+  };
   const listProject = () => {
-    return getDocs(collection(db, 'Board'))
-  }
+    return getDocs(collection(db, "Board"));
+  };
   const deleteCV = async (path) => {
-    await deleteDoc(doc(db, 'CV', path))
-  }
+    await deleteDoc(doc(db, "CV", path));
+  };
   const generatePDF = (props) => {
-    var doc = new jsPDF('p', 'pt')
+    var doc = new jsPDF("p", "pt");
 
-    doc.text(20, 20, props.data().name)
-    doc.addFont(props.data().fname)
-    doc.text(20, 60, props.data().email)
-    doc.text(20, 100, props.data().location)
-    doc.text(20, 140, props.data().CNIC)
-    doc.text(20, 180, props.data().education)
-    doc.text(20, 220, props.data().skills)
-    doc.text(20, 260, props.data().experience)
-    doc.text(20, 300, props.data().phone)
+    doc.text(20, 20, props.data().name);
+    doc.addFont(props.data().fname);
+    doc.text(20, 60, props.data().email);
+    doc.text(20, 100, props.data().location);
+    doc.text(20, 140, props.data().CNIC);
+    doc.text(20, 180, props.data().education);
+    doc.text(20, 220, props.data().skills);
+    doc.text(20, 260, props.data().experience);
+    doc.text(20, 300, props.data().phone);
 
-    doc.save('demo.pdf')
-  }
-  const [CVdata, setCVData] = useState([])
+    doc.save("demo.pdf");
+  };
+  const [CVdata, setCVData] = useState([]);
   const getsingleCV = (cv) => {
-    setCVData(cv)
-  }
-  const [team, setTeam] = useState([])
+    setCVData(cv);
+  };
+  const [team, setTeam] = useState([]);
   const putteam = (data) => {
-    setTeam(...team, data)
-  }
-  const [singleproject, setSingleproject] = useState([])
+    setTeam(...team, data);
+  };
+  const [singleproject, setSingleproject] = useState([]);
   const handlesingleproject = (prop) => {
-    setSingleproject(props)
+    setSingleproject(props);
     // console.log(singleproject)
-  }
+  };
   const deleteEmploy = async (path) => {
-    await deleteDoc(doc(db, 'TeamMembers', path))
-  }
+    await deleteDoc(doc(db, "TeamMembers", path));
+  };
 
-  const [project, setProjectData] = useState(null)
+  const [project, setProjectData] = useState(null);
 
   const boardData = (docId) => {
     // const data= getDocs(collection(db, 'Board' ,docId));
-    const documentRef = doc(db, 'Board', docId) // 'Board' is the collection name
+    const documentRef = doc(db, "Board", docId); // 'Board' is the collection name
 
     getDoc(documentRef)
       .then((docSnapshot) => {
         if (docSnapshot.exists()) {
           // Document exists, access its data
-          setProjectData(docSnapshot.data())
+          setProjectData(docSnapshot.data());
         } else {
           // console.log('Document does not exist')
         }
       })
       .catch((error) => {
-        console.error('Error getting document:', error)
-      })
-  }
-
-  useEffect(() => {
-    // console.log(singleproject)
-  })
+        console.error("Error getting document:", error);
+      });
+  };
 
   return (
     <FirebaseContext.Provider
@@ -364,5 +406,5 @@ export const FirebaseProvider = (props) => {
     >
       {props.children}
     </FirebaseContext.Provider>
-  )
-}
+  );
+};

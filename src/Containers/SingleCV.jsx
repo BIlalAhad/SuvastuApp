@@ -4,9 +4,7 @@ import { UseFirebase } from '../Context/Firebase'
 
 export default function SingleCV() {
   const Firebase = UseFirebase()
-  useEffect(() => {
-    // console.log(Firebase.CVdata)
-  })
+ 
   const { toPDF, targetRef } = usePDF({ filename: 'page.pdf' })
   return (
     <div

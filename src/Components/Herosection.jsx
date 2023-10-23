@@ -21,6 +21,7 @@ export default function Herosection() {
           <p className='text-8xl text-orange-600'>...</p>
         </div>
       </div>
+     
     </>
   )
 }

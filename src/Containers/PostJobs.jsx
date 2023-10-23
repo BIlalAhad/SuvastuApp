@@ -12,7 +12,7 @@ export default function PostJobs() {
   const [jobshift, setJobshift] = useState([])
   const [gender, setGender] = useState([])
   const [country, setCountry] = useState([])
-  useEffect(() => {})
+ 
   const Firebase = UseFirebase()
 
   const handleform = (e) => {

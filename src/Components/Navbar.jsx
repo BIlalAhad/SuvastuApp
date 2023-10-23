@@ -12,7 +12,7 @@ export default function Navbar() {
   const Firebase = UseFirebase()
   return (
     <>
-      <nav className='  bg-gradient-to-b from-slate-300   border-b-2 border-blue-900 p-2 sticky top-0 z-10 '>
+      <nav className=' border border-blue-600 bg-slate-100 p-2 sticky top-0 z-10 '>
         <button
           className='text-xl float-right m-8 sm:hidden absolute top-0 right-0 bg-white p-3'
           onClick={handlenav}

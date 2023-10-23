@@ -9,6 +9,7 @@ export default function Dashboard() {
   useEffect(() => {
     Firebase.listAllMembers().then((item) => setTeam(item.docs.length))
     Firebase.listAllCV().then((item) => setCV(item.docs.length))
+    console.log(team,CV)
   }, [])
   return (
     <>
