@@ -13,7 +13,6 @@ export default function Index() {
       <Herosection />
       <Main1st />
       <Main2nd />
-      <Updates />
     </>
   )
 }

@@ -18,4 +18,12 @@
 	overflow-y: scroll;
 	margin-bottom: 25px;
 }
+.bg-green{
+	background-color: rgb(157, 219, 157);
+}
+.backgroungimg{
+	background-image: url('../public/bg.avif');
+	object-fit: cover;
+	
+}
 

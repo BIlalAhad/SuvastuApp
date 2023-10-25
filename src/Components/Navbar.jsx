@@ -12,7 +12,7 @@ export default function Navbar() {
   const Firebase = UseFirebase()
   return (
     <>
-      <nav className=' border border-blue-600 bg-slate-100 p-2 sticky top-0 z-10 '>
+      {/* <nav className=' border border-blue-600 bg-slate-100 p-2 sticky top-0 z-10 '>
         <button
           className='text-xl float-right m-8 sm:hidden absolute top-0 right-0 bg-white p-3'
           onClick={handlenav}
@@ -30,7 +30,7 @@ export default function Navbar() {
             <Link to='/'>
               <li className='p-2 border-b-2 border-blue-700'>Home</li>
             </Link>
-            <Link to='#'>
+            <Link to='achivement'>
               <li className='p-2 border-b-2 border-blue-700'>Achievement</li>
             </Link>
             <Link to='team'>
@@ -56,7 +56,32 @@ export default function Navbar() {
             </Link>
           </ul>
         </div>
-      </nav>
+      </nav> */}
+      <nav className="bg-gray-800 text-white p-4">
+  <div className="container mx-auto flex justify-between items-center">
+    {/* Section 1: Logo */}
+    <div className="text-center">
+      <Link to="/">
+        <img className=" w-40" src="logo.png" alt="Logo" />
+      </Link>
+    </div>
+
+    {/* Section 2: Navigation Links */}
+    <div className="space-x-6">
+      <Link to="/" className="text-gray-400 hover:text-white transition">Home</Link>
+      <Link to="../achivement" className="text-gray-400 hover:text-white transition">Achievement</Link>
+      <Link to="/team" className="text-gray-400 hover:text-white transition">Team</Link>
+      <Link to="/jobs" className="text-gray-400 hover:text-white transition">JOBS</Link>
+      <Link to="/Dashboard" className="text-gray-400 hover:text-white transition">Dashboard</Link>
+    </div>
+
+    {/* Section 3: User Account (if needed) */}
+    <div>
+      {/* Add user account links or components here */}
+    </div>
+  </div>
+</nav>
+
     </>
   )
 }

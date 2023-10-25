@@ -33,13 +33,15 @@ import TaskProgress from './Containers/TaskProgress'
 import Team from './Containers/Team'
 import UXCV from './Containers/UXCV'
 import WordpressCV from './Containers/WordpressCV'
+import Achivement from './Containers/Achivement'
+import Addachivement from './Containers/Addachivement'
 
 function App() {
   return (
     <>
       <BrowserRouter>
         <PrimeReactProvider>
-          <Dashboardheader />
+          {/* <Dashboardheader /> */}
           <Navbar />
           <Routes>
             <Route path='/' element={<Index />} />
@@ -69,6 +71,8 @@ function App() {
             <Route path='projects' element={<Projects />} />
             <Route path='project/:id' element={<TaskProgress />} />
             <Route path='logo' element={<Logo />} />
+            <Route path='achivement' element={<Achivement />} />
+            <Route path='addachivement' element={<Addachivement />} />
           </Routes>
           <Footer />
         </PrimeReactProvider>

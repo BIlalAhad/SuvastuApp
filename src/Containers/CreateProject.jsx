@@ -47,15 +47,7 @@ export default function CreateProject() {
   };
   
 
-  const handleChange = (e, email) => {
-    if(e.currentTarget.checked && !teamMembersEmail.includes(email)) {
-        setTeamMembersEmail([...teamMembersEmail, email]);
-        console.log(teamMembersEmail);
-    }
-    // console.log(teamMembersEmail);
 
-    return;
-  }
   
 
   return (
@@ -116,7 +108,7 @@ export default function CreateProject() {
               rows="4"
             />
           </div>
-          <div className="space-y-2 h-48 overflow-auto">
+          {/* <div className="space-y-2 h-48 overflow-auto">
             <label htmlFor="team" className="text-sm font-medium text-gray-600">
              Add Team
             </label>
@@ -137,7 +129,7 @@ export default function CreateProject() {
                 })
               }
               
-          </div>
+          </div> */}
          <div className='flex justify-center'>
          <button
             onClick={handleSelection}

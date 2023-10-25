@@ -23,19 +23,27 @@ export default function TaskProgress() {
   const url = window.location.href.split("/");
   const documentId = url.pop();
   const [movedData, setMoveData] = useState(null);
+  const [email,setEmail]=useState([]);
 
-  // Firebase
-  useEffect(() => {
-    Firebase.getTodos(documentId).then((item) => {
-      setTodoData(item.docs);
-    },[]);
+
+
+
+  useEffect(()=>{
+    Firebase.getTodos(documentId).then(item=>{
+      setTodoData(item.docs)
+    })
     Firebase.getDoing(documentId).then((item) => {
       setDoingData(item.docs);
     });
-    Firebase.DoneData(documentId).then((item) => {
+    Firebase.DoneData(documentId).then(item=>{
       setDone(item.docs);
-    },[]);
-  }, [documentId, todoData, doingData, done]);
+    })
+    Firebase.listAllMembers().then(item=>{
+      setEmail(item.docs);
+    })
+    console.log(todoData,doingData,done);
+
+  },[])
 
   const documentRef = doc(Firebase.db, "Board", documentId);
 
@@ -94,16 +102,26 @@ export default function TaskProgress() {
     list.classList.toggle('hidden')
     console.log("toggle");
   }
+  const handleChange = (e, email) => {
+    // if(e.currentTarget.checked && !teamMembersEmail.includes(email)) {
+      // const greenbg=document.getElementById('green')
+      // email.classList.toggle('bg-green')
+        setAssignTo( email);
+        console.log(assignTo);
+    }
+    // console.log(teamMembersEmail);
+
+   
 
   return (
     <>
     
-      <section className="flex bg-gray-100">
+      <section className="flex  backgroungimg">
         <DashboardSidebar />
-        <div className="w-full my-20">
+        <div className="w-full my-20 ">
           {specificData ? (
             <div>
-              <div className="flex items-center gap-10">
+              <div className="flex items-center gap-10 text-gray-200">
               <div className="px-8 py-4">
                 <h2 className="text-2xl font-semibold">
                   Project Name: {specificData.projectname}
@@ -114,13 +132,13 @@ export default function TaskProgress() {
               <label class="relative inline-flex items-center cursor-pointer" onChange={toggle}>
               <input type="checkbox" value="" class="sr-only peer"/>
               <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-              <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">list view</span>
+              <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300 text-white">list view</span>
             </label>
               </div>
              {/* grid view */}
               <div className="grid grid-cols-3 gap-5 max-w-5xl mx-auto text-lg font-semibold " id="progress">
                 <div className="border p-2 bg-white rounded-lg">
-                  <div className="bg-blue-900 text-white text-center p-2 rounded-t-lg">
+                  <div className="bg-gray-800 text-white text-center p-2 rounded-t-lg">
                     Todo
                   </div>
                   <ul className="scrolling">
@@ -130,9 +148,10 @@ export default function TaskProgress() {
     className="mt-3 shadow bg-blue-100 rounded-lg animate__animated animate__fadeIn" // Add animation classes here
     id="content"
     draggable="true"
+    onDragStart={() => setMoveData(item)}
     
   >
-    <p className="bg-blue-900 w-full p-1 text-center text-white rounded-t-lg">
+    <p className="bg-gray-800 w-full p-1 text-center text-white rounded-t-lg">
       Task: {item.data().task}
     </p>
     <div className="p-4">
@@ -168,7 +187,7 @@ export default function TaskProgress() {
                   onDragOver={handleDragOver}
                   onDrop={handleDrop}
                 >
-                  <div className="bg-blue-900 text-white text-center p-2 rounded-t-lg">
+                  <div className="bg-gray-800 text-white text-center p-2 rounded-t-lg">
                     Doing
                   </div>
                   <ul className="scrolling">
@@ -179,7 +198,7 @@ export default function TaskProgress() {
                         draggable="true"
                         onDragStart={() => setMoveData(item)}
                       >
-                        <p className="bg-blue-900 w-full p-1 text-center text-white rounded-t-lg">
+                        <p className="bg-gray-800 w-full p-1 text-center text-white rounded-t-lg">
                           {item.data().task}
                         </p>
                         <div className="p-4">
@@ -209,13 +228,13 @@ export default function TaskProgress() {
                   onDrop={handleDrop2}
                 
                 >
-                  <div className="bg-blue-900 text-white text-center p-2 rounded-t-lg">
+                  <div className="bg-gray-800 text-white text-center p-2 rounded-t-lg">
                     Done
                   </div>
                   <ul className="over scrolling" >
                     {done.map((item, index) => (
                       <div key={index} className="mt-3 shadow bg-blue-100 rounded-lg">
-                        <p className="bg-blue-900 w-full p-1 text-center text-white rounded-t-lg">
+                        <p className="bg-gray-800 w-full p-1 text-center text-white rounded-t-lg">
                           Task: {item.data().task}
                         </p>
                         <div className="p-4">
@@ -364,7 +383,7 @@ export default function TaskProgress() {
                   />
                 </div>
                 <div className="flex justify-between mb-4">
-                  <div className="w-1/3">
+                  <div className="w-1/2">
                     <label className="block font-bold">Starting Date:</label>
                     <input
                       type="date"
@@ -373,7 +392,7 @@ export default function TaskProgress() {
                       onChange={(e) => setStartingDate(e.target.value)}
                     />
                   </div>
-                  <div className="w-1/3">
+                  <div className="w-1/2">
                     <label className="block font-bold">Due Date:</label>
                     <input
                       type="date"
@@ -382,20 +401,40 @@ export default function TaskProgress() {
                       onChange={(e) => setDueDate(e.target.value)}
                     />
                   </div>
-                  <div className="w-1/3">
-                    <label className="block font-bold">Assign To:</label>
-                    <input
-                      type="text"
-                      className="w-full border-b p-1 text-sm"
+                  <div className="">
+                    <ul>
+                    </ul>
+                  </div>
+                </div>
+                   <div className="my-12 h-48 overflow-auto">
+                   <input
+                      type="search"
+                      className="w-1/2 mb-4 flex items-center  mx-auto border p-2 text-sm text-center"
                       value={assignTo}
                       onChange={(e) => setAssignTo(e.target.value)}
                       placeholder="Add task"
                     />
-                  </div>
-                </div>
+                        {
+                          email.filter(item=>item.data().employemail.includes(assignTo)).map(item=>{
+                            return  <>
+                            <div className='flex justify-between border-b p-2  ' >
+                            <h2 className='' onClick={(e)=>handleChange(e, item.data().employemail)}>
+                              {item.data().employemail}
+                            </h2>
+                            </div>
+                            </>
+                          })
+                        // email.map(item=>{
+                        //   item.filter(item.data().employemail.includes('e').map(em=>{
+                        //     return <li> {em.data().employemail}</li>
+                        //   }))
+                        // return <li>{item.employemail}</li>
+                        // })
+                        }
+                   </div>
                 <button
                   type="submit"
-                  className="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                  className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
                 >
                   Send
                 </button>
@@ -407,31 +446,7 @@ export default function TaskProgress() {
 
 
 
-{/* <div class="rounded border w-1/2 mx-auto mt-4">
-  <!-- Tabs -->
-  <ul id="tabs" class="inline-flex pt-2 px-1 w-full border-b">
-    <li class="bg-white px-4 text-gray-800 font-semibold py-2 rounded-t border-t border-r border-l -mb-px"><a id="default-tab" href="#first">Tab 1</a></li>
-    <li class="px-4 text-gray-800 font-semibold py-2 rounded-t"><a href="#second">Tab 2</a></li>
-    <li class="px-4 text-gray-800 font-semibold py-2 rounded-t"><a href="#third">Tab 3</a></li>
-    <li class="px-4 text-gray-800 font-semibold py-2 rounded-t"><a href="#fourth">Tab 4</a></li>
-  </ul>
 
-  <!-- Tab Contents -->
-  <div id="tab-contents">
-    <div id="first" class="p-4">
-      First tab
-    </div>
-    <div id="second" class="hidden p-4">
-      Second tab
-    </div>
-    <div id="third" class="hidden p-4">
-      Third tab
-    </div>
-    <div id="fourth" class="hidden p-4">
-      Fourth tab
-    </div>
-  </div>
-</div> */}
     </>
   );
 }

@@ -16,6 +16,7 @@ import {
   getDocs,
   getFirestore,
   setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
 import jsPDF from "jspdf";
@@ -247,6 +248,23 @@ export const FirebaseProvider = (props) => {
     });
   };
 
+
+
+  // post achivement 
+  const postAchivement=async(img,link,description)=>{
+    const imageRef = ref(storage, `${Date.now()}${img.name}`);
+    const uploadResult = await uploadBytes(imageRef, img);
+  await addDoc(collection(db,'Achivement'),{
+    link,description,
+    img:uploadResult.ref.fullPath,
+  })
+  alert('success')
+  }
+
+  const getAChivement=async()=>{
+    return getDocs(collection(db,'Achivement'))
+  }
+
   // get data from document sub-collection
   const getTodos = async (documentId) => {
     const documentReference = doc(db, "Board", documentId);
@@ -316,6 +334,15 @@ export const FirebaseProvider = (props) => {
   const deleteCV = async (path) => {
     await deleteDoc(doc(db, "CV", path));
   };
+  const deleteAchivement=async(path)=>{
+    console.log(path)
+    await deleteDoc(doc(db, 'Achivement' , path))
+  }
+  const updateAchivement=async(path)=>{
+    updateDoc(doc(db, `Achivement/${path}`),{
+      description:'description',
+    })
+  }
   const generatePDF = (props) => {
     var doc = new jsPDF("p", "pt");
 
@@ -402,6 +429,10 @@ export const FirebaseProvider = (props) => {
         getDoing,
         movetoDone,
         DoneData,
+        postAchivement,
+        getAChivement,
+        deleteAchivement,
+        updateAchivement
       }}
     >
       {props.children}

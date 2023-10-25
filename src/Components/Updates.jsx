@@ -3,7 +3,7 @@ import React from 'react'
 export default function Updates() {
   return (
     <>
-      <section className='py-20  bg-gradient-to-t from-blue-950 to-blue-400'>
+      <section className='py-20  bg-gray-800'>
         <div className='max-w-7xl mx-auto space-y-5'>
           <h2 className='text-2xl font-semibold text-center text-white'>
             Sign up and get started with Trello today. A world of productive

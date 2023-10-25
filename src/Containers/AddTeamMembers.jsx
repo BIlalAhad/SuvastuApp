@@ -15,6 +15,7 @@ export default function AddTeamMembers() {
   const [showModal, setShowModal] = React.useState(false)
   const handleemployForm = (e) => {
     e.preventDefault()
+    console.log(employemail)
     Firebase.AddEmploy(employname, employemail, employrank, employimg)
     setEmployemail('')
     setEmployimg('')
