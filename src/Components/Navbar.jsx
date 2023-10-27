@@ -10,6 +10,7 @@ export default function Navbar() {
     nav.classList.toggle('hidden')
   }
   const Firebase = UseFirebase()
+  
   return (
     <>
       {/* <nav className=' border border-blue-600 bg-slate-100 p-2 sticky top-0 z-10 '>

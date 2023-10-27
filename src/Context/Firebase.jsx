@@ -88,6 +88,7 @@ export const FirebaseProvider = (props) => {
         const credential = GoogleAuthProvider.credentialFromError(error);
       });
   };
+  
   const SigninUserWithEmailAndPassword = (email, password) => {
     return signInWithEmailAndPassword(FirebaseAuth, email, password)
       .then((value) => {
@@ -261,6 +262,43 @@ export const FirebaseProvider = (props) => {
   alert('success')
   }
 
+  // post Likes 
+  const [likes,setlike]=useState([0]);
+  const postlikes = async (id) => {
+    const newData = {
+      user: user.email,
+      datetime: Date.now(),
+    };
+  
+    try {
+      // Get the reference to the Achievement document
+      const achievementRef = doc(db, 'Achivement', id);
+  
+      // Fetch the current data first to avoid overwriting existing likes
+      const achievementSnapshot = await getDoc(achievementRef);
+      const existingLikes = achievementSnapshot.data().likes || [];
+  
+      // Add the new data to the existing likes array
+      existingLikes.push(newData);
+  
+      // Update the Achievement document with the updated likes array
+      await updateDoc(achievementRef, {
+        likes: existingLikes,
+      });
+    } catch (error) {
+      console.error("Error adding a like:", error);
+      // Handle the error as needed
+    }
+  };
+
+    const getlikes=async()=>{
+      const data=getDocs(collection(db,'Achivement'))
+      console.log(data.docs[0]);
+    }
+
+   
+
+
   const getAChivement=async()=>{
     return getDocs(collection(db,'Achivement'))
   }
@@ -432,7 +470,10 @@ export const FirebaseProvider = (props) => {
         postAchivement,
         getAChivement,
         deleteAchivement,
-        updateAchivement
+        updateAchivement,
+        likes,
+        postlikes,
+        getlikes,
       }}
     >
       {props.children}
