@@ -18,7 +18,29 @@ export default function Projects() {
     <>
       <div className='flex'>
         <DashboardSidebar />
-        <div className='max-w-6xl mx-auto my-20 grid grid-cols-4 gap-2'>
+        <div className='w-full'>
+          <table className='w-full'>
+            <thead>
+              <tr>
+                <th className='p-2'>project Name</th>
+              </tr>
+            </thead>
+            <tbody>
+            {data.map((item) => {
+            return (
+              <>
+                <Link to={`../project/${item.data().documentId}`}>
+                  <h1 className='bg-slate-100 p-2 border rounded-md text-center text-lg font-semibold hover:brightness-75 uppercase'>
+                    {item.data().projectname}
+                  </h1>
+                </Link>
+              </>
+            )
+          })}
+            </tbody>
+          </table>
+        </div>
+        {/* <div className='max-w-6xl mx-auto my-20 grid grid-cols-4 gap-2'>
           {data.map((item) => {
             return (
               <>
@@ -30,7 +52,7 @@ export default function Projects() {
               </>
             )
           })}
-        </div>
+        </div> */}
       </div>
     </>
   )

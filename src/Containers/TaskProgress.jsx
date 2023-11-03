@@ -1,9 +1,11 @@
 import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { AiFillPlusSquare } from "react-icons/ai";
+import { AiOutlinePlus } from "react-icons/ai";
+import { BsClockHistory } from "react-icons/bs";
 import DashboardSidebar from "../Components/DashboardSidebar";
 import { UseFirebase } from "../Context/Firebase";
-import { CSSTransition } from 'react-transition-group';
+import { CSSTransition } from "react-transition-group";
 import { Link } from "react-router-dom";
 
 export default function TaskProgress() {
@@ -23,46 +25,59 @@ export default function TaskProgress() {
   const url = window.location.href.split("/");
   const documentId = url.pop();
   const [movedData, setMoveData] = useState(null);
-  const [email,setEmail]=useState([]);
+  const [email, setEmail] = useState([]);
+  const [name, setName] = useState([]);
+  const [section, setsection] = useState([]);
+  const [tableId,setTableId]=useState();
 
+  useEffect(() => {
+    Firebase.getTodos(documentId).then((item) => {
+      setTodoData(item.docs);
+    });
 
+    Firebase.listSection(documentId).then((item) => {
+      setsection(item.docs);
+    });
 
+    // Firebase.listSection(documentId).then((item) => console.log(item.docs));
 
-  useEffect(()=>{
-    Firebase.getTodos(documentId).then(item=>{
-      setTodoData(item.docs)
-    })
     Firebase.getDoing(documentId).then((item) => {
       setDoingData(item.docs);
     });
-    Firebase.DoneData(documentId).then(item=>{
+    Firebase.DoneData(documentId).then((item) => {
       setDone(item.docs);
-    })
-    Firebase.listAllMembers().then(item=>{
+    });
+    Firebase.listAllMembers().then((item) => {
       setEmail(item.docs);
-    })
-    console.log(todoData,doingData,done);
-
-  },[])
+    });
+    // console.log(todoData, doingData, done);
+  }, []);
 
   const documentRef = doc(Firebase.db, "Board", documentId);
 
-  
   getDoc(documentRef)
     .then((docSnapshot) => {
       if (docSnapshot.exists()) {
         setSpecificData(docSnapshot.data());
       } else {
-        console.log('Document does not exist');
+        console.log("Document does not exist");
       }
     })
     .catch((error) => {
       console.error("Error getting document:", error);
     });
 
-  const handleForm = (e) => {
+  const handleForm = (e, id) => {
     e.preventDefault();
-    Firebase.posttask(documentId, task, description, assignTo, startingDate, dueDate);
+    Firebase.posttask(
+      documentId,
+      id,
+      task,
+      assignTo,
+      description,
+      startingDate,
+      dueDate
+    );
     setAssignTo("");
     setTask("");
     setDescription("");
@@ -95,249 +110,213 @@ export default function TaskProgress() {
     Firebase.movetoDone(documentId, movedData);
     console.log("drop");
   }
-  const toggle=()=>{
-    const toggle=document.getElementById('progress')
-    const list=document.getElementById('list')
-    toggle.classList.toggle('hidden')
-    list.classList.toggle('hidden')
-    console.log("toggle");
-  }
+  const toggle = () => {
+    const toggle = document.getElementById("progress");
+    const list = document.getElementById("list");
+    toggle.classList.toggle("hidden");
+    list.classList.toggle("hidden");
+    // console.log("toggle");
+  };
   const handleChange = (e, email) => {
     // if(e.currentTarget.checked && !teamMembersEmail.includes(email)) {
-      // const greenbg=document.getElementById('green')
-      // email.classList.toggle('bg-green')
-        setAssignTo( email);
-        console.log(assignTo);
-    }
-    // console.log(teamMembersEmail);
-
-   
+    // const greenbg=document.getElementById('green')
+    // email.classList.toggle('bg-green')
+    setAssignTo(email);
+    // console.log(assignTo);
+  };
+  console.log(tableId);
 
   return (
     <>
-    
       <section className="flex  backgroungimg">
         <DashboardSidebar />
         <div className="w-full my-20 ">
           {specificData ? (
             <div>
               <div className="flex items-center gap-10 text-gray-200">
-              <div className="px-8 py-4">
-                <h2 className="text-2xl font-semibold">
-                  Project Name: {specificData.projectname}
-                </h2>
-                <p className="font-semibold">Project Duration: {specificData.ProjectDuration}</p>
-                <p className="font-semibold">Project Type: {specificData.ProjectType}</p>
-              </div>
-              <label class="relative inline-flex items-center cursor-pointer" onChange={toggle}>
-              <input type="checkbox" value="" class="sr-only peer"/>
-              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-              <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300 text-white">list view</span>
-            </label>
-              </div>
-             {/* grid view */}
-              <div className="grid grid-cols-3 gap-5 max-w-5xl mx-auto text-lg font-semibold " id="progress">
-                <div className="border p-2 bg-white rounded-lg">
-                  <div className="bg-gray-800 text-white text-center p-2 rounded-t-lg">
-                    Todo
-                  </div>
-                  <ul className="scrolling">
-                  {todoData.map((item, index) => (
-  <div
-    key={index}
-    className="mt-3 shadow bg-blue-100 rounded-lg animate__animated animate__fadeIn" // Add animation classes here
-    id="content"
-    draggable="true"
-    onDragStart={() => setMoveData(item)}
-    
-  >
-    <p className="bg-gray-800 w-full p-1 text-center text-white rounded-t-lg">
-      Task: {item.data().task}
-    </p>
-    <div className="p-4">
-      <p className="flex justify-between border-b">
-        <span>To: {item.data().assignTo}</span>
-      </p>
-      <div className="flex justify-between my-2 border-b">
-        <span>Date: {item.data().startingDate} - {item.data().dueDate}</span>
-      </div>
-      <button
-        className="text-blue-900"
-        onClick={() => Firebase.clearTodos(documentId, item)}
-      >
-        ➡
-      </button>
-    </div>
-  </div>
-))}
-
-                    
-                  </ul>
-                  <button
-                    className="text-3xl text-blue-900 border p-2 float-right "
-                    onClick={() => setShowModal(true)}
+                <div className="px-8 py-4">
+                  <h2 className="text-2xl font-semibold">
+                    Project Name: {specificData.projectname}
+                  </h2>
+                  <p className="font-semibold">
+                    Project Duration: {specificData.ProjectDuration}
+                  </p>
+                  <p className="font-semibold">
+                    Project Type: {specificData.ProjectType}
+                  </p>
+                </div>
+                <label
+                  class="relative inline-flex items-center cursor-pointer"
+                  onChange={toggle}
+                >
+                  <input type="checkbox" value="" class="sr-only peer" />
+                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                  <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300 text-white">
+                    list view
+                  </span>
+                </label>
+                <div>
+                  <span
+                    className="text-2xl font-bold"
+                    onClick={() => Firebase.createsection(documentId, name)}
                   >
-                    <AiFillPlusSquare />
-                  </button>
-                </div>
-                <div
-                  className="border p-2 bg-white box rounded-lg"
-                  id="box"
-                  onDragEnter={handleDragEnter}
-                  onDragOver={handleDragOver}
-                  onDrop={handleDrop}
-                >
-                  <div className="bg-gray-800 text-white text-center p-2 rounded-t-lg">
-                    Doing
-                  </div>
-                  <ul className="scrolling">
-                    {doingData.map((item, index) => (
-                      <div
-                        key={index}
-                        className="mt-3 shadow bg-blue-100 rounded-lg"
-                        draggable="true"
-                        onDragStart={() => setMoveData(item)}
-                      >
-                        <p className="bg-gray-800 w-full p-1 text-center text-white rounded-t-lg">
-                          {item.data().task}
-                        </p>
-                        <div className="p-4">
-                          <p className="flex justify-between border-b">
-                            <span>To: {item.data().assignTo}</span>
-                          </p>
-                          <div className="flex justify-between my-2 border-b">
-                            <span>Date :{item.data().startingDate} - {item.data().dueDate}</span>
-                          </div>
-                          <button
-                            className="text-blue-900"
-                            onClick={() => Firebase.movetoDone(documentId, item)}
-                          >
-                            ➡
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </ul>
-                </div>
-                <div
-                
-                  className="border p-2 bg-white rounded-lg"
-                  id="box2"
-                  onDragEnter={handleDragEnter}
-                  onDragOver={handleDragOver}
-                  onDrop={handleDrop2}
-                
-                >
-                  <div className="bg-gray-800 text-white text-center p-2 rounded-t-lg">
-                    Done
-                  </div>
-                  <ul className="over scrolling" >
-                    {done.map((item, index) => (
-                      <div key={index} className="mt-3 shadow bg-blue-100 rounded-lg">
-                        <p className="bg-gray-800 w-full p-1 text-center text-white rounded-t-lg">
-                          Task: {item.data().task}
-                        </p>
-                        <div className="p-4">
-                          <p className="flex justify-between border-b">
-                            <span>To: {item.data().DoneBy}</span>
-                          </p>
-                          <div className="flex justify-between my-2 border-b">
-                            <span>{item.data().dueDate} - {item.data().dueDate}</span>
-                          </div>
-                          <button className="text-green-600">✔ Completed</button>
-                        </div>
-                      </div>
-                    ))}
-                  </ul>
+                    <AiOutlinePlus />
+                  </span>
+                  <input
+                    type="text"
+                    onChange={(e) => setName(e.target.value)}
+                  />
                 </div>
               </div>
-
-
-
-
-            {/* list view */}
-            <section className="w-[80%] mx-auto hidden" id="list">
-              
-              <h2 className=" font-bold text-red-400 p-2">Todo</h2>
-            <table className="  text-left mx-auto shadow w-full">
-              <thead className="bg-gray-200">
-                      <tr className=" p-2">
-                        <th className="p-2">Task</th>
-                        <th className="p-2">Assign To</th>
-                        <th className="p-2">Starting Date</th>
-                        <th className="p-2">Due Date</th>
-                        <th className="p-2">description</th>
-                      </tr>
-              </thead>
-              <tbody>
-                {
-                  todoData.map(item=>{
-                    return <tr className="p-2">
-                      <td className="p-2">{item.data().task}</td>
-                      <td className="p-2">{item.data().assignTo}</td>
-                      <td className="p-2">{item.data().startingDate}</td>
-                      <td className="p-2">{item.data().dueDate}</td>
-                      <td className="p-2">{item.data().description}</td>
-                    </tr>
-                  })
-                }
-              </tbody>
-            </table>
-
              
-            <h2 className=" font-bold text-yellow-600 p-2">Doing</h2>
-            <table className="  text-left mx-auto shadow w-full">
-              <thead className="bg-gray-200">
-                      <tr className=" p-2">
-                        <th className="p-2">Task</th>
-                        <th className="p-2">Assign To</th>
-                        <th className="p-2">Starting Date</th>
-                        <th className="p-2">Due Date</th>
-                        <th className="p-2">description</th>
-                      </tr>
-              </thead>
-              <tbody>
-                {
-                  doingData.map(item=>{
-                    return <tr className="p-2">
-                      <td className="p-2">{item.data().task}</td>
-                      <td className="p-2">{item.data().assignTo}</td>
-                      <td className="p-2">{item.data().startingDate}</td>
-                      <td className="p-2">{item.data().dueDate}</td>
-                      <td className="p-2">{item.data().description}</td>
-                    </tr>
-                  })
+              {/* new progress section */}
+              <div className=" max-w-5xl mx-auto mt-5 flex  gap-7 overflow-y-auto">
+                {section.map((item) => {
+                  return (
+                    <>
+                    
+                      <div className="  p-2 bg-white w-[400px]">
+                        {
+                          <>
+                            <div className="relative w-full">
+                              <h2 className="text-white bg-gray-800 p-4">
+                                {item.data().SectionName}
+                                
+                              </h2>
+                              <span
+                                className="absolute top-2 right-2 text-white"
+                                onClick={() => setShowModal(true)}
+                              >
+                                <AiOutlinePlus />
+                              </span>
+                              <div>
+                               <form
+                                  action=""
+                                  className="text-sm p-2 "
+                                  onSubmit={(e) => handleForm(e, item.id)}
+                                >
+                                  <label htmlFor="" className="text-sm">
+                                    task
+                                  </label>
+                                  <input
+                                    type="text"
+                                    className="border w-full"
+                                    onChange={(e) => setTask(e.target.value)}
+                                  />
+                                  <label htmlFor="">description</label>
+                                  <input
+                                    type="text"
+                                    className="border w-full"
+                                    onChange={(e) =>
+                                      setDescription(e.target.value)
+                                    }
+                                  />
+                                  <label htmlFor="">starting Date</label>
+                                  <input
+                                    type="text"
+                                    className="border w-full"
+                                    onChange={(e) =>
+                                      setStartingDate(e.target.value)
+                                    }
+                                  />
+                                  <label htmlFor="">Due Date</label>
+                                  <input
+                                    type="text"
+                                    className="border w-full"
+                                    onChange={(e) => setDueDate(e.target.value)}
+                                  />
+                                  <div className="mt-3 h-24 overflow-auto">
+                                    <input
+                                      type="search"
+                                      className="w-1/2 mb-4 flex items-center  mx-auto border p-2 text-sm text-center"
+                                      value={assignTo}
+                                      onChange={(e) =>
+                                        setAssignTo(e.target.value)
+                                      }
+                                      placeholder="Add task"
+                                    />
+                                     {
+  email && email.length > 0 ? (
+    email
+      .filter((item) =>
+        item.data().employemail.includes(assignTo)
+      )
+      .map((item) => {
+        return (
+          <>
+            <div className="flex justify-between border-b p-2  ">
+              <h2
+                className=""
+                onClick={(e) =>
+                  handleChange(e, item.data().employemail)
                 }
-              </tbody>
-            </table>
+              >
+                {item.data().employemail}
+              </h2>
+            </div>
+          </>
+        );
+      })
+  ) : null
+}
+                                   </div>
+                                  <button
+                                    className="bg-gray-800 p-1 rounded text-white"
+                                    type="submit"
+                                  >
+                                    submit
+                                  </button>
+                                </form> 
+                              
 
+                               
+   
+   {
+                                  item.data()&&item.data().tasks&&item.data().tasks.map(item=>{
+                                    return(
+                                      <>
+                                          <div className=" shadow border border-gray-300 p-2 text-sm  space-y-2 mt-3">
+                                  <h2 className="text-center p-2 text-white bg-gray-700 rounded-t-md">{item.task}</h2>
+                                  <p className="flex justify-between"><span className="font-semibold"> assign to:</span> <span>{item.assignTo}</span> </p>
+                                  <div className="flex justify-between items-center">
+                                    <span>
+                                      {item.startingDate}
+                                    </span>
+                                    <span className="">
+                                          <BsClockHistory/>
+                                    </span>
+                                    <span className="text-red-500">
+                                      {item.dueDate}
+                                    </span>
+                                  </div>
 
-            <h2 className=" font-bold text-green-600 p-2">done</h2>
-            <table className="  text-left mx-auto shadow w-full">
-              <thead className="bg-gray-200">
-                      <tr className=" p-2">
-                        <th className="p-2">Task</th>
-                        <th className="p-2">Assign To</th>
-                        <th className="p-2">Starting Date</th>
-                        <th className="p-2">Due Date</th>
-                        <th className="p-2">description</th>
-                      </tr>
-              </thead>
-              <tbody>
-                {
-                  done.map(item=>{
-                    return <tr className="p-2">
-                      <td className="p-2">{item.data().task}</td>
-                      <td className="p-2">{item.data().DoneBy}</td>
-                      <td className="p-2">{item.data().startingDate}</td>
-                      <td className="p-2">{item.data().dueDate}</td>
-                      <td className="p-2">{item.data().description}</td>
-                    </tr>
-                  })
-                }
-              </tbody>
-            </table>
-            </section>
+                                  {
+                                    <div className="flex justify-between items-center gap-2">
+                                  <select className="w-full border p-1" name="" id="">
+                                  {section.map(item=>{
+                                    return <>
+                                      {/* <option value={123} onSelect={()=>setTableId(item.id)}>{item.data().SectionName}</option> */}
+                                    </>
+                                  })}
+                                  </select>
+                                  <button className="bg-gray-600 p-1 text-white" >move</button>
+                                  </div>
+                                  }
+                                          </div>
+                                      </>
+                                    )
+                                  })
+                                }
+                              </div>
+                            </div>
+                          </>
+                        }
+                      </div>
+                    </>
+                  );
+                })}
+              </div>
+              {/* new progress section */}
             </div>
           ) : (
             <div>Loading ...</div>
@@ -402,36 +381,46 @@ export default function TaskProgress() {
                     />
                   </div>
                   <div className="">
-                    <ul>
-                    </ul>
+                    <ul></ul>
                   </div>
                 </div>
-                   <div className="my-12 h-48 overflow-auto">
-                   <input
-                      type="search"
-                      className="w-1/2 mb-4 flex items-center  mx-auto border p-2 text-sm text-center"
-                      value={assignTo}
-                      onChange={(e) => setAssignTo(e.target.value)}
-                      placeholder="Add task"
-                    />
-                        {
-                          email.filter(item=>item.data().employemail.includes(assignTo)).map(item=>{
-                            return  <>
-                            <div className='flex justify-between border-b p-2  ' >
-                            <h2 className='' onClick={(e)=>handleChange(e, item.data().employemail)}>
-                              {item.data().employemail}
-                            </h2>
+                <div className="my-12 h-48 overflow-auto">
+                  <input
+                    type="search"
+                    className="w-1/2 mb-4 flex items-center  mx-auto border p-2 text-sm text-center"
+                    value={assignTo}
+                    onChange={(e) => setAssignTo(e.target.value)}
+                    placeholder="Add task"
+                  />
+                  {
+                    email
+                      .filter((item) =>
+                        item.data().employemail.includes(assignTo)
+                      )
+                      .map((item) => {
+                        return (
+                          <>
+                            <div className="flex justify-between border-b p-2  ">
+                              <h2
+                                className=""
+                                onClick={(e) =>
+                                  handleChange(e, item.data().employemail)
+                                }
+                              >
+                                {item.data().employemail}
+                              </h2>
                             </div>
-                            </>
-                          })
-                        // email.map(item=>{
-                        //   item.filter(item.data().employemail.includes('e').map(em=>{
-                        //     return <li> {em.data().employemail}</li>
-                        //   }))
-                        // return <li>{item.employemail}</li>
-                        // })
-                        }
-                   </div>
+                          </>
+                        );
+                      })
+                    // email.map(item=>{
+                    //   item.filter(item.data().employemail.includes('e').map(em=>{
+                    //     return <li> {em.data().employemail}</li>
+                    //   }))
+                    // return <li>{item.employemail}</li>
+                    // })
+                  }
+                </div>
                 <button
                   type="submit"
                   className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
@@ -443,10 +432,6 @@ export default function TaskProgress() {
           </div>
         </div>
       ) : null}
-
-
-
-
     </>
   );
 }
