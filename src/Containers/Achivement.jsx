@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { AiFillLike } from "react-icons/ai";
-import { FaCommentDots } from "react-icons/fa";
-import { RiDeleteBin6Line } from "react-icons/ri";
-import { UseFirebase } from "../Context/Firebase";
+import React, { useEffect, useState } from 'react';
+import { AiFillLike } from 'react-icons/ai';
+import { FaCommentDots } from 'react-icons/fa';
+import { RiDeleteBin6Line } from 'react-icons/ri';
+import { UseFirebase } from '../Context/Firebase';
 
 export default function Achivement() {
   const [data, setData] = useState([]);
@@ -61,7 +61,9 @@ export default function Achivement() {
               </button>
               <div className="text-xl flex items-end gap-2">
                 <FaCommentDots />
-                <span className="text-sm">{item.data().comments&&item.data().comments.length}</span>
+                <span className="text-sm">
+                  {item.data().comments && item.data().comments.length}
+                </span>
               </div>
             </div>
             <div className="bg-gray-100 p-4">
@@ -81,12 +83,22 @@ export default function Achivement() {
               </div>
               <ul className="my-5 bg-white p-5 h-[100px] overflow-auto">
                 {item.data().comments &&
-                  item.data().comments.map((comment,i) => {
+                  item.data().comments.map((comment, i) => {
                     return (
-                      <li key={comment.id} className="border-b shadow p-2 mt-3 hover:bg-gray-100 relative" >
-                        <button className="text-red-500 absolute right-0 top-3 p-2" onClick={()=>Firebase.deletecomment(item.id,i)}><RiDeleteBin6Line/></button>
+                      <li
+                        key={comment.id}
+                        className="border-b shadow p-2 mt-3 hover:bg-gray-100 relative"
+                      >
+                        <button
+                          className="text-red-500 absolute right-0 top-3 p-2"
+                          onClick={() => Firebase.deletecomment(item.id, i)}
+                        >
+                          <RiDeleteBin6Line />
+                        </button>
                         <p>{comment.comment}</p>
-                        <address className="text-sm text-orange-400">{comment.user}</address>
+                        <address className="text-sm text-orange-400">
+                          {comment.user}
+                        </address>
                       </li>
                     );
                   })}

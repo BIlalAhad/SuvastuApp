@@ -1,34 +1,34 @@
-import { doc, getDoc } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
-import { AiFillPlusSquare } from "react-icons/ai";
-import { AiOutlinePlus } from "react-icons/ai";
-import { BsClockHistory } from "react-icons/bs";
-import DashboardSidebar from "../Components/DashboardSidebar";
-import { UseFirebase } from "../Context/Firebase";
-import { CSSTransition } from "react-transition-group";
-import { Link } from "react-router-dom";
+import { doc, getDoc } from 'firebase/firestore';
+import React, { useEffect, useState } from 'react';
+import { AiFillPlusSquare } from 'react-icons/ai';
+import { AiOutlinePlus } from 'react-icons/ai';
+import { BsClockHistory } from 'react-icons/bs';
+import DashboardSidebar from '../Components/DashboardSidebar';
+import { UseFirebase } from '../Context/Firebase';
+import { CSSTransition } from 'react-transition-group';
+import { Link } from 'react-router-dom';
 
 export default function TaskProgress() {
   const [data, setData] = useState([]);
   const [project, setProject] = useState([]);
-  const [task, setTask] = useState("");
-  const [description, setDescription] = useState("");
-  const [startingDate, setStartingDate] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const [assignTo, setAssignTo] = useState("");
+  const [task, setTask] = useState('');
+  const [description, setDescription] = useState('');
+  const [startingDate, setStartingDate] = useState('');
+  const [dueDate, setDueDate] = useState('');
+  const [assignTo, setAssignTo] = useState('');
   const [specificData, setSpecificData] = useState(null);
   const [doingData, setDoingData] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [todoData, setTodoData] = useState([]);
   const [done, setDone] = useState([]);
   const Firebase = UseFirebase();
-  const url = window.location.href.split("/");
+  const url = window.location.href.split('/');
   const documentId = url.pop();
   const [movedData, setMoveData] = useState(null);
   const [email, setEmail] = useState([]);
   const [name, setName] = useState([]);
   const [section, setsection] = useState([]);
-  const [tableId,setTableId]=useState();
+  const [taskItem, setTaskItem] = useState();
 
   useEffect(() => {
     Firebase.getTodos(documentId).then((item) => {
@@ -51,20 +51,20 @@ export default function TaskProgress() {
       setEmail(item.docs);
     });
     // console.log(todoData, doingData, done);
-  }, []);
+  }, [section]);
 
-  const documentRef = doc(Firebase.db, "Board", documentId);
+  const documentRef = doc(Firebase.db, 'Board', documentId);
 
   getDoc(documentRef)
     .then((docSnapshot) => {
       if (docSnapshot.exists()) {
         setSpecificData(docSnapshot.data());
       } else {
-        console.log("Document does not exist");
+        console.log('Document does not exist');
       }
     })
     .catch((error) => {
-      console.error("Error getting document:", error);
+      console.error('Error getting document:', error);
     });
 
   const handleForm = (e, id) => {
@@ -78,21 +78,21 @@ export default function TaskProgress() {
       startingDate,
       dueDate
     );
-    setAssignTo("");
-    setTask("");
-    setDescription("");
-    setStartingDate("");
-    setDueDate("");
+    setAssignTo('');
+    setTask('');
+    setDescription('');
+    setStartingDate('');
+    setDueDate('');
   };
 
   const move = (documentId) => {
-    console.log("moving");
+    console.log('moving');
     Firebase.clearTodos(documentId, movedData);
   };
 
   function handleDragEnter(event) {
     event.preventDefault();
-    console.log("enter");
+    console.log('enter');
   }
 
   function handleDragOver(event) {
@@ -102,19 +102,19 @@ export default function TaskProgress() {
   function handleDrop(event) {
     event.preventDefault();
     Firebase.clearTodos(documentId, movedData);
-    console.log("drop");
+    console.log('drop');
   }
 
   function handleDrop2(event) {
     event.preventDefault();
     Firebase.movetoDone(documentId, movedData);
-    console.log("drop");
+    console.log('drop');
   }
   const toggle = () => {
-    const toggle = document.getElementById("progress");
-    const list = document.getElementById("list");
-    toggle.classList.toggle("hidden");
-    list.classList.toggle("hidden");
+    const toggle = document.getElementById('progress');
+    const list = document.getElementById('list');
+    toggle.classList.toggle('hidden');
+    list.classList.toggle('hidden');
     // console.log("toggle");
   };
   const handleChange = (e, email) => {
@@ -124,7 +124,7 @@ export default function TaskProgress() {
     setAssignTo(email);
     // console.log(assignTo);
   };
-  console.log(tableId);
+  // console.log(tableId);
 
   return (
     <>
@@ -168,20 +168,18 @@ export default function TaskProgress() {
                   />
                 </div>
               </div>
-             
+
               {/* new progress section */}
               <div className=" max-w-5xl mx-auto mt-5 flex  gap-7 overflow-y-auto">
                 {section.map((item) => {
                   return (
                     <>
-                    
                       <div className="  p-2 bg-white w-[400px]">
                         {
                           <>
                             <div className="relative w-full">
                               <h2 className="text-white bg-gray-800 p-4">
                                 {item.data().SectionName}
-                                
                               </h2>
                               <span
                                 className="absolute top-2 right-2 text-white"
@@ -190,7 +188,7 @@ export default function TaskProgress() {
                                 <AiOutlinePlus />
                               </span>
                               <div>
-                               <form
+                                <form
                                   action=""
                                   className="text-sm p-2 "
                                   onSubmit={(e) => handleForm(e, item.id)}
@@ -235,78 +233,107 @@ export default function TaskProgress() {
                                       }
                                       placeholder="Add task"
                                     />
-                                     {
-  email && email.length > 0 ? (
-    email
-      .filter((item) =>
-        item.data().employemail.includes(assignTo)
-      )
-      .map((item) => {
-        return (
-          <>
-            <div className="flex justify-between border-b p-2  ">
-              <h2
-                className=""
-                onClick={(e) =>
-                  handleChange(e, item.data().employemail)
-                }
-              >
-                {item.data().employemail}
-              </h2>
-            </div>
-          </>
-        );
-      })
-  ) : null
-}
-                                   </div>
+                                    {email && email.length > 0
+                                      ? email
+                                          .filter((item) =>
+                                            item
+                                              .data()
+                                              .employemail.includes(assignTo)
+                                          )
+                                          .map((item) => {
+                                            return (
+                                              <>
+                                                <div className="flex justify-between border-b p-2  ">
+                                                  <h2
+                                                    className=""
+                                                    onClick={(e) =>
+                                                      handleChange(
+                                                        e,
+                                                        item.data().employemail
+                                                      )
+                                                    }
+                                                  >
+                                                    {item.data().employemail}
+                                                  </h2>
+                                                </div>
+                                              </>
+                                            );
+                                          })
+                                      : null}
+                                  </div>
                                   <button
                                     className="bg-gray-800 p-1 rounded text-white"
                                     type="submit"
                                   >
                                     submit
                                   </button>
-                                </form> 
-                              
+                                </form>
 
-                               
-   
-   {
-                                  item.data()&&item.data().tasks&&item.data().tasks.map(item=>{
-                                    return(
+                                {item.data() &&
+                                  item.data().tasks &&
+                                  item.data().tasks.map((item, index) => {
+                                    return (
                                       <>
-                                          <div className=" shadow border border-gray-300 p-2 text-sm  space-y-2 mt-3">
-                                  <h2 className="text-center p-2 text-white bg-gray-700 rounded-t-md">{item.task}</h2>
-                                  <p className="flex justify-between"><span className="font-semibold"> assign to:</span> <span>{item.assignTo}</span> </p>
-                                  <div className="flex justify-between items-center">
-                                    <span>
-                                      {item.startingDate}
-                                    </span>
-                                    <span className="">
-                                          <BsClockHistory/>
-                                    </span>
-                                    <span className="text-red-500">
-                                      {item.dueDate}
-                                    </span>
-                                  </div>
-
-                                  {
-                                    <div className="flex justify-between items-center gap-2">
-                                  <select className="w-full border p-1" name="" id="">
-                                  {section.map(item=>{
-                                    return <>
-                                      {/* <option value={123} onSelect={()=>setTableId(item.id)}>{item.data().SectionName}</option> */}
-                                    </>
-                                  })}
-                                  </select>
-                                  <button className="bg-gray-600 p-1 text-white" >move</button>
-                                  </div>
-                                  }
+                                        <div className=" shadow border border-gray-300 p-2 text-sm  space-y-2 mt-3">
+                                          <h2 className="text-center p-2 text-white bg-gray-700 rounded-t-md">
+                                            {item.task}
+                                          </h2>
+                                          <p className="flex justify-between">
+                                            <span className="font-semibold">
+                                              {' '}
+                                              assign to:
+                                            </span>{' '}
+                                            <span>{item.assignTo}</span>{' '}
+                                          </p>
+                                          <div className="flex justify-between items-center">
+                                            <span>{item.startingDate}</span>
+                                            <span className="">
+                                              <BsClockHistory />
+                                            </span>
+                                            <span className="text-red-500">
+                                              {item.dueDate}
+                                            </span>
                                           </div>
+
+                                          {
+                                            <div className="flex justify-between items-center gap-2">
+                                              <select
+                                                className="w-full border p-1"
+                                                name=""
+                                                id=""
+                                                value={'test'}
+                                                onChange={(e) =>
+                                                  setTaskItem(e.target.value)
+                                                }
+                                              >
+                                                {section.map((item) => {
+                                                  return (
+                                                    <option value={item.id}>
+                                                      {item.data().SectionName}
+                                                    </option>
+                                                  );
+                                                })}
+                                              </select>
+                                              <button
+                                                onClick={() =>
+                                                  Firebase.moveTask(
+                                                    item,
+                                                    taskItem,
+                                                    documentId,
+                                                    index,
+                                                    item.id
+                                                  )
+                                                }
+                                                className="bg-gray-600 p-1 text-white"
+                                              >
+                                                move
+                                              </button>
+                                            </div>
+                                          }
+                                        </div>
                                       </>
-                                    )
-                                  })
-                                }
+                                    );
+                                  })}
                               </div>
                             </div>
                           </>

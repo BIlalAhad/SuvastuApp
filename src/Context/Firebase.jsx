@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp } from 'firebase/app';
 import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
@@ -6,7 +6,7 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithPopup,
-} from "firebase/auth";
+} from 'firebase/auth';
 import {
   addDoc,
   collection,
@@ -17,34 +17,34 @@ import {
   getFirestore,
   setDoc,
   updateDoc,
-} from "firebase/firestore";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
-import jsPDF from "jspdf";
-import React, { createContext, useContext, useEffect, useState } from "react";
+} from 'firebase/firestore';
+import { getStorage, ref, uploadBytes } from 'firebase/storage';
+import jsPDF from 'jspdf';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 // import UserID from 'UserID';
 
 export const FirebaseContext = createContext(null);
 export const UseFirebase = () => useContext(FirebaseContext);
 // const firebaseConfig = {
-//   apiKey: "AIzaSyDHBgbXifApU9CnGbsuSAqU-Jqrq14eHDI",
-//   authDomain: "test-e8e47.firebaseapp.com",
-//   projectId: "test-e8e47",
-//   storageBucket: "test-e8e47.appspot.com",
-//   messagingSenderId: "367649107386",
-//   appId: "1:367649107386:web:53e40c4ab4af7437dc8183",
-//   measurementId: "G-0L44XDR2PS"
+//   apiKey: 'AIzaSyDHBgbXifApU9CnGbsuSAqU-Jqrq14eHDI',
+//   authDomain: 'test-e8e47.firebaseapp.com',
+//   projectId: 'test-e8e47',
+//   storageBucket: 'test-e8e47.appspot.com',
+//   messagingSenderId: '367649107386',
+//   appId: '1:367649107386:web:53e40c4ab4af7437dc8183',
+//   measurementId: 'G-0L44XDR2PS',
 // };
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBKRm9Z97Tl-rHncqlSKfvcxDy4eLsp5TU",
-  authDomain: "suvastutech-1e3c4.firebaseapp.com",
-  projectId: "suvastutech-1e3c4",
-  storageBucket: "suvastutech-1e3c4.appspot.com",
-  messagingSenderId: "720367525810",
-  appId: "1:720367525810:web:55d34f5e2d9396360bceab",
-  measurementId: "G-6L5LNQ79CS",
+  apiKey: 'AIzaSyBKRm9Z97Tl-rHncqlSKfvcxDy4eLsp5TU',
+  authDomain: 'suvastutech-1e3c4.firebaseapp.com',
+  projectId: 'suvastutech-1e3c4',
+  storageBucket: 'suvastutech-1e3c4.appspot.com',
+  messagingSenderId: '720367525810',
+  appId: '1:720367525810:web:55d34f5e2d9396360bceab',
+  measurementId: 'G-6L5LNQ79CS',
 };
-// let ID = (new UserID()).getID();
+// let ID = new UserID().getID();
 const firebaseapp = initializeApp(firebaseConfig);
 const storage = getStorage(firebaseapp);
 const db = getFirestore(firebaseapp);
@@ -68,10 +68,10 @@ export const FirebaseProvider = (props) => {
   const SignupUserWithEmailAndPassword = async (email, password) => {
     return createUserWithEmailAndPassword(FirebaseAuth, email, password)
       .then((value) => {
-        alert("successfully Signup");
+        alert('successfully Signup');
       })
       .catch((err) => {
-        alert("failed");
+        alert('failed');
       });
   };
   const SignInWithGoogle = () => {
@@ -88,29 +88,29 @@ export const FirebaseProvider = (props) => {
         const credential = GoogleAuthProvider.credentialFromError(error);
       });
   };
-  
+
   const SigninUserWithEmailAndPassword = (email, password) => {
     return signInWithEmailAndPassword(FirebaseAuth, email, password)
       .then((value) => {
-        alert("successfully Login");
+        alert('successfully Login');
       })
       .catch((err) => {
-        alert("failed");
+        alert('failed');
       });
   };
   const AddEmploy = async (employname, employemail, employrank, employimg) => {
     const imageRef = ref(storage, `${Date.now()}${employimg.name}`);
     const uploadResult = await uploadBytes(imageRef, employimg);
-    const docRef = await addDoc(collection(db, "TeamMembers"), {
+    const docRef = await addDoc(collection(db, 'TeamMembers'), {
       employname,
       employemail,
       employrank,
       imageURL: uploadResult.ref.fullPath,
     });
-    alert("success");
+    alert('success');
   };
   const uploadLogo = async (Logo) => {
-    const docRef = await addDoc(collection(db, "Logo"), {
+    const docRef = await addDoc(collection(db, 'Logo'), {
       Logo,
     });
   };
@@ -125,7 +125,7 @@ export const FirebaseProvider = (props) => {
     gender,
     country
   ) => {
-    const docRef = await addDoc(collection(db, "PostJobs"), {
+    const docRef = await addDoc(collection(db, 'PostJobs'), {
       jobtitle,
       jobDescription,
       skills,
@@ -136,7 +136,7 @@ export const FirebaseProvider = (props) => {
       gender,
       country,
     });
-    alert("success");
+    alert('success');
   };
   const PostApplicent = async (
     name,
@@ -150,7 +150,7 @@ export const FirebaseProvider = (props) => {
     email,
     ApplyFor
   ) => {
-    const docRef = await addDoc(collection(db, "CV"), {
+    const docRef = await addDoc(collection(db, 'CV'), {
       name,
       fname,
       location,
@@ -162,7 +162,7 @@ export const FirebaseProvider = (props) => {
       email,
       ApplyFor,
     });
-    alert("success");
+    alert('success');
   };
   // const PostProjectTeam = async (
   //   projectname,
@@ -200,38 +200,36 @@ export const FirebaseProvider = (props) => {
     ProjectType,
     Description,
     teamMembersEmail
-    ) => {
+  ) => {
     // console.log("teamMembersEmail before posting:", teamMembersEmail);
     // console.log(teamMembersEmail);
-  
-    const docRef = await addDoc(collection(db, "Board"), {
+
+    const docRef = await addDoc(collection(db, 'Board'), {
       projectname,
       ProjectDuration,
       ProjectType,
       Description,
-      teamMembersEmail // Include teamMembersEmail in the Firestore document
+      teamMembersEmail, // Include teamMembersEmail in the Firestore document
     });
-  
+
     const documentId = docRef.id;
-  
-    alert("Success");
-  
-    await setDoc(doc(db, "Board", documentId), {
+
+    alert('Success');
+
+    await setDoc(doc(db, 'Board', documentId), {
       documentId,
       projectname,
       ProjectDuration,
       ProjectType,
       Description,
-      teamMembersEmail 
+      teamMembersEmail,
     });
-  
+
     console.log(teamMembersEmail);
   };
-  
 
   // sublevel collection
 
-  
   const posttask = async (
     id,
     documentId,
@@ -243,49 +241,59 @@ export const FirebaseProvider = (props) => {
   ) => {
     const newData = {
       task,
-    assignTo,
-    description,
-    startingDate,
-    dueDate
+      assignTo,
+      description,
+      startingDate,
+      dueDate,
     };
-    try{
-      const BoardRef=doc(db, "Board", id ,'section',documentId)
-      console.log(documentId,id)
-      const Boardsnapshot=await getDoc(BoardRef);
-      const existingtask=Boardsnapshot.data().tasks || [];
-      existingtask.push(newData)
-      await updateDoc(BoardRef,{
-        tasks:existingtask
-      })
-    }catch (error) {
-      console.error("Error adding a like:", error);
+    try {
+      const BoardRef = doc(db, 'Board', id, 'section', documentId);
+      console.log(documentId, id);
+      const Boardsnapshot = await getDoc(BoardRef);
+      const existingtask = Boardsnapshot.data().tasks || [];
+      existingtask.push(newData);
+      await updateDoc(BoardRef, {
+        tasks: existingtask,
+      });
+    } catch (error) {
+      console.error('Error adding a like:', error);
       // Handle the error as needed
     }
-  }
+  };
 
+  const listtasks = async (documentId, id) => {
+    getDocs(collection(db, `Board/${documentId}/section/${id}/task`));
+  };
 
-  
-
-
-  const listtasks=async(documentId,id)=>{
-    getDocs(collection(db,`Board/${documentId}/section/${id}/task`))
-  }
-
-
-
-  // post achivement 
-  const postAchivement=async(img,link,description)=>{
+  // post achivement
+  const postAchivement = async (img, link, description) => {
     const imageRef = ref(storage, `${Date.now()}${img.name}`);
     const uploadResult = await uploadBytes(imageRef, img);
-  await addDoc(collection(db,'Achivement'),{
-    link,description,
-    img:uploadResult.ref.fullPath,
-  })
-  alert('success')
-  }
+    await addDoc(collection(db, 'Achivement'), {
+      link,
+      description,
+      img: uploadResult.ref.fullPath,
+    });
+    alert('success');
+  };
 
-  // post Likes 
-  const [likes,setlike]=useState([0]);
+  const moveTask = async (documentId, item, taskItem, index, id) => {
+    // const deleteRef = getDocs(doc(db, `Board/${taskItem}/section/${}`));
+    const docRef = doc(db, `Board/${taskItem}/section/${item}`);
+    const collectionRef = await getDoc(docRef);
+    const existingTask = collectionRef.data().tasks || [];
+    existingTask.push(documentId);
+    await updateDoc(docRef, {
+      tasks: existingTask,
+    });
+    console.log(id, item.id);
+
+    // console.log(collectionRef.data());
+    // console.log(item, taskItem, documentId);
+  };
+
+  // post Likes
+  const [likes, setlike] = useState([0]);
   const postlikes = async (id) => {
     const newData = {
       user: user.email,
@@ -294,7 +302,7 @@ export const FirebaseProvider = (props) => {
     try {
       // Get the reference to the Achievement document
       const achievementRef = doc(db, 'Achivement', id);
-  
+
       // Fetch the current data first to avoid overwriting existing likes
       const achievementSnapshot = await getDoc(achievementRef);
       const existingLikes = achievementSnapshot.data().likes || [];
@@ -305,87 +313,84 @@ export const FirebaseProvider = (props) => {
       // }))
       // Add the new data to the existing likes array
       existingLikes.push(newData);
-  
+
       // Update the Achievement document with the updated likes array
       await updateDoc(achievementRef, {
         likes: existingLikes,
       });
     } catch (error) {
-      console.error("Error adding a like:", error);
+      console.error('Error adding a like:', error);
       // Handle the error as needed
     }
   };
 
-    const getlikes=async()=>{
-      const data=getDocs(collection(db,'Achivement'))
-      console.log(data.docs[0]);
-    }
+  const getlikes = async () => {
+    const data = getDocs(collection(db, 'Achivement'));
+    console.log(data.docs[0]);
+  };
 
-  
-    const postComment = async (id,comment) => {
-      const newData = {
-        user: user.email,
-        datetime: Date.now(),
-        comment:comment
-      };
-      try {
-        // Get the reference to the Achievement document
-        const achievementRef = doc(db, 'Achivement', id);
-    
-        // Fetch the current data first to avoid overwriting existing likes
-        const achievementSnapshot = await getDoc(achievementRef);
-        const existingComments = achievementSnapshot.data().comments || [];
-    
-        // Add the new data to the existing likes array
-        existingComments.push(newData);
-    
-        // Update the Achievement document with the updated likes array
-        await updateDoc(achievementRef, {
-          comments: existingComments,
-        });
-      } catch (error) {
-        console.error("Error adding a like:", error);
-        // Handle the error as needed
-      }
+  const postComment = async (id, comment) => {
+    const newData = {
+      user: user.email,
+      datetime: Date.now(),
+      comment: comment,
     };
+    try {
+      // Get the reference to the Achievement document
+      const achievementRef = doc(db, 'Achivement', id);
 
+      // Fetch the current data first to avoid overwriting existing likes
+      const achievementSnapshot = await getDoc(achievementRef);
+      const existingComments = achievementSnapshot.data().comments || [];
 
-    const deletecomment=async(id,i)=>{
-      console.log(id,i)
-      try {
-        // Get the reference to the Achievement document
-        const achievementRef = doc(db, 'Achivement', id);
-    
-        // Fetch the current data first to avoid overwriting existing likes
-        const achievementSnapshot = await getDoc(achievementRef);
-        const existingComments = achievementSnapshot.data().comments || [];
-    
-        // Add the new data to the existing likes array
-        existingComments.splice(i,1);
-    
-        // Update the Achievement document with the updated likes array
-        await updateDoc(achievementRef, {
-          comments: existingComments,
-        });
-      } catch (error) {
-        console.error("Error adding a like:", error);
-        // Handle the error as needed
-      }
+      // Add the new data to the existing likes array
+      existingComments.push(newData);
+
+      // Update the Achievement document with the updated likes array
+      await updateDoc(achievementRef, {
+        comments: existingComments,
+      });
+    } catch (error) {
+      console.error('Error adding a like:', error);
+      // Handle the error as needed
     }
-   
+  };
 
-    const getComment=async()=>{
-      return getDocs(db,'Achivement',)
+  const deletecomment = async (id, i) => {
+    console.log(id, i);
+    try {
+      // Get the reference to the Achievement document
+      const achievementRef = doc(db, 'Achivement', id);
+
+      // Fetch the current data first to avoid overwriting existing likes
+      const achievementSnapshot = await getDoc(achievementRef);
+      const existingComments = achievementSnapshot.data().comments || [];
+
+      // Add the new data to the existing likes array
+      existingComments.splice(i, 1);
+
+      // Update the Achievement document with the updated likes array
+      await updateDoc(achievementRef, {
+        comments: existingComments,
+      });
+    } catch (error) {
+      console.error('Error adding a like:', error);
+      // Handle the error as needed
     }
+  };
 
-  const getAChivement=async()=>{
-    return getDocs(collection(db,'Achivement'))
-  }
+  const getComment = async () => {
+    return getDocs(db, 'Achivement');
+  };
+
+  const getAChivement = async () => {
+    return getDocs(collection(db, 'Achivement'));
+  };
 
   // get data from document sub-collection
   const getTodos = async (documentId) => {
-    const documentReference = doc(db, "Board", documentId);
-    const collectionReference = collection(documentReference, "todo");
+    const documentReference = doc(db, 'Board', documentId);
+    const collectionReference = collection(documentReference, 'todo');
     const querySnapshot = await getDocs(collectionReference);
     return querySnapshot;
   };
@@ -393,7 +398,7 @@ export const FirebaseProvider = (props) => {
   // move data from one collection to another collection
   const clearTodos = async (documentId, item) => {
     console.log(item.id);
-    const collectionRef = collection(db, "Board", documentId, "doing");
+    const collectionRef = collection(db, 'Board', documentId, 'doing');
     const result = await addDoc(collectionRef, {
       task: item.data().task,
       assignTo: item.data().assignTo,
@@ -402,66 +407,65 @@ export const FirebaseProvider = (props) => {
       dueDate: item.data().dueDate,
     });
 
-    await deleteDoc(doc(db, "Board", documentId, "todo", item.id));
+    await deleteDoc(doc(db, 'Board', documentId, 'todo', item.id));
   };
 
   // move data from one collection to another collection
   const movetoDone = async (documentId, items) => {
     console.log(items);
-    const collectionRef = collection(db, "Board", documentId, "done");
+    const collectionRef = collection(db, 'Board', documentId, 'done');
     const result = await addDoc(collectionRef, {
       task: items.data().task,
       DoneBy: items.data().assignTo,
       description: items.data().description,
       dueDate: items.data().dueDate,
-     
     });
 
-    await deleteDoc(doc(db, "Board", documentId, "doing", items.id));
+    await deleteDoc(doc(db, 'Board', documentId, 'doing', items.id));
   };
 
   // get data from document sub-collection
   const getDoing = async (documentId) => {
-    const documentReference = doc(db, "Board", documentId);
-    const collectionReference = collection(documentReference, "doing");
+    const documentReference = doc(db, 'Board', documentId);
+    const collectionReference = collection(documentReference, 'doing');
     const querySnapshot = await getDocs(collectionReference);
     return querySnapshot;
   };
 
   // get data from document sub-collection
   const DoneData = async (documentId) => {
-    const documentReference = doc(db, "Board", documentId);
-    const collectionReference = collection(documentReference, "done");
+    const documentReference = doc(db, 'Board', documentId);
+    const collectionReference = collection(documentReference, 'done');
     const querySnapshot = await getDocs(collectionReference);
     return querySnapshot;
   };
 
   const listAllCV = () => {
-    return getDocs(collection(db, "CV"));
+    return getDocs(collection(db, 'CV'));
   };
   const listAllJobs = () => {
-    return getDocs(collection(db, "PostJobs"));
+    return getDocs(collection(db, 'PostJobs'));
   };
   const listAllMembers = () => {
-    return getDocs(collection(db, "TeamMembers"));
+    return getDocs(collection(db, 'TeamMembers'));
   };
   const listProject = () => {
-    return getDocs(collection(db, "Board"));
+    return getDocs(collection(db, 'Board'));
   };
   const deleteCV = async (path) => {
-    await deleteDoc(doc(db, "CV", path));
+    await deleteDoc(doc(db, 'CV', path));
   };
-  const deleteAchivement=async(path)=>{
-    console.log(path)
-    await deleteDoc(doc(db, 'Achivement' , path))
-  }
-  const updateAchivement=async(path)=>{
-    updateDoc(doc(db, `Achivement/${path}`),{
-      description:'description',
-    })
-  }
+  const deleteAchivement = async (path) => {
+    console.log(path);
+    await deleteDoc(doc(db, 'Achivement', path));
+  };
+  const updateAchivement = async (path) => {
+    updateDoc(doc(db, `Achivement/${path}`), {
+      description: 'description',
+    });
+  };
   const generatePDF = (props) => {
-    var doc = new jsPDF("p", "pt");
+    var doc = new jsPDF('p', 'pt');
 
     doc.text(20, 20, props.data().name);
     doc.addFont(props.data().fname);
@@ -473,7 +477,7 @@ export const FirebaseProvider = (props) => {
     doc.text(20, 260, props.data().experience);
     doc.text(20, 300, props.data().phone);
 
-    doc.save("demo.pdf");
+    doc.save('demo.pdf');
   };
   const [CVdata, setCVData] = useState([]);
   const getsingleCV = (cv) => {
@@ -489,27 +493,21 @@ export const FirebaseProvider = (props) => {
     // console.log(singleproject)
   };
   const deleteEmploy = async (path) => {
-    await deleteDoc(doc(db, "TeamMembers", path));
+    await deleteDoc(doc(db, 'TeamMembers', path));
   };
 
+  const createsection = async (id, name) => {
+    addDoc(collection(db, 'Board', id, 'section'), {
+      SectionName: name,
+    });
+  };
 
-
-  const createsection=async(id,name)=>{
-    addDoc(collection(db,'Board',id,'section'),{
-      SectionName:name,
-    })
-  }
-
-  
-
-
-
-  const listSection=async(documentId)=>{
-   const documentref=doc(db,'Board',documentId);
-   const collectionref=collection(documentref,'section')
-   const snapshot=await getDocs(collectionref);
-   return snapshot;
-  }
+  const listSection = async (documentId) => {
+    const documentref = doc(db, 'Board', documentId);
+    const collectionref = collection(documentref, 'section');
+    const snapshot = await getDocs(collectionref);
+    return snapshot;
+  };
   // const listSection = async (documentId) => {
   //   const documentReference = doc(db, "Board", documentId);
   //   const collectionReference = collection(documentReference, "doing");
@@ -517,12 +515,11 @@ export const FirebaseProvider = (props) => {
   //   return querySnapshot;
   // };
 
-
   const [project, setProjectData] = useState(null);
 
   const boardData = (docId) => {
     // const data= getDocs(collection(db, 'Board' ,docId));
-    const documentRef = doc(db, "Board", docId); // 'Board' is the collection name
+    const documentRef = doc(db, 'Board', docId); // 'Board' is the collection name
 
     getDoc(documentRef)
       .then((docSnapshot) => {
@@ -534,7 +531,7 @@ export const FirebaseProvider = (props) => {
         }
       })
       .catch((error) => {
-        console.error("Error getting document:", error);
+        console.error('Error getting document:', error);
       });
   };
 
@@ -584,7 +581,8 @@ export const FirebaseProvider = (props) => {
         deletecomment,
         createsection,
         listSection,
-        listtasks
+        listtasks,
+        moveTask,
       }}
     >
       {props.children}
