@@ -29,6 +29,12 @@ export default function TaskProgress() {
   const [name, setName] = useState([]);
   const [section, setsection] = useState([]);
   const [taskItem, setTaskItem] = useState();
+  const [sectionId, setSectionId] = useState([]);
+  const[taskCard, setTaskCard]=useState([]);
+
+  const dragmove=(documentId,item,task)=>{
+ console.log(documentId,item,task)
+  }
 
   useEffect(() => {
     Firebase.getTodos(documentId).then((item) => {
@@ -51,21 +57,21 @@ export default function TaskProgress() {
       setEmail(item.docs);
     });
     // console.log(todoData, doingData, done);
-  }, [section]);
-
-  const documentRef = doc(Firebase.db, 'Board', documentId);
-
-  getDoc(documentRef)
-    .then((docSnapshot) => {
-      if (docSnapshot.exists()) {
-        setSpecificData(docSnapshot.data());
-      } else {
-        console.log('Document does not exist');
-      }
-    })
-    .catch((error) => {
-      console.error('Error getting document:', error);
-    });
+    const documentRef = doc(Firebase.db, 'Board', documentId);
+  
+    getDoc(documentRef)
+      .then((docSnapshot) => {
+        if (docSnapshot.exists()) {
+          setSpecificData(docSnapshot.data());
+        } else {
+          console.log('Document does not exist');
+        }
+      })
+      .catch((error) => {
+        console.error('Error getting document:', error);
+      });
+  }, []);
+console.log(todoData,section,done,email)
 
   const handleForm = (e, id) => {
     e.preventDefault();
@@ -174,7 +180,7 @@ export default function TaskProgress() {
                 {section.map((item) => {
                   return (
                     <>
-                      <div className="  p-2 bg-white w-[400px]">
+                      <div className="  p-2 bg-white w-[400px]" onDragOver={console.log('over')} onDrop={console.log(item.id)}>
                         {
                           <>
                             <div className="relative w-full">
@@ -271,32 +277,33 @@ export default function TaskProgress() {
 
                                 {item.data() &&
                                   item.data().tasks &&
-                                  item.data().tasks.map((item, index) => {
+                                  item.data().tasks.map((task, index) => {
                                     return (
                                       <>
-                                        <div className=" shadow border border-gray-300 p-2 text-sm  space-y-2 mt-3">
+                                        <div className=" shadow border border-gray-300 p-2 text-sm  space-y-2 mt-3 " draggable={true} onDragStart={()=>dragmove(documentId,item.id,task)}>
                                           <h2 className="text-center p-2 text-white bg-gray-700 rounded-t-md">
-                                            {item.task}
+                                            {task.task}
                                           </h2>
                                           <p className="flex justify-between">
                                             <span className="font-semibold">
                                               {' '}
                                               assign to:
                                             </span>{' '}
-                                            <span>{item.assignTo}</span>{' '}
+                                            <span>{task.assignTo}</span>{' '}
                                           </p>
                                           <div className="flex justify-between items-center">
-                                            <span>{item.startingDate}</span>
+                                            <span>{task.startingDate}</span>
                                             <span className="">
                                               <BsClockHistory />
                                             </span>
                                             <span className="text-red-500">
-                                              {item.dueDate}
+                                              {task.dueDate}
                                             </span>
                                           </div>
 
                                           {
                                             <div className="flex justify-between items-center gap-2">
+                                             
                                               <select
                                                 className="w-full border p-1"
                                                 name=""
@@ -308,20 +315,24 @@ export default function TaskProgress() {
                                               >
                                                 {section.map((item) => {
                                                   return (
+                                                    <>
                                                     <option value={item.id}>
                                                       {item.data().SectionName}
                                                     </option>
+                                                    </>
                                                   );
                                                 })}
                                               </select>
+                                              {console.log()}
                                               <button
                                                 onClick={() =>
                                                   Firebase.moveTask(
-                                                    item,
+                                                    task,
                                                     taskItem,
                                                     documentId,
                                                     index,
                                                     item.id
+                                                    
                                                   )
                                                 }
                                                 className="bg-gray-600 p-1 text-white"
