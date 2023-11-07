@@ -7,6 +7,7 @@ import DashboardSidebar from '../Components/DashboardSidebar';
 import { UseFirebase } from '../Context/Firebase';
 import { CSSTransition } from 'react-transition-group';
 import { Link } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function TaskProgress() {
   const [data, setData] = useState([]);
@@ -31,6 +32,10 @@ export default function TaskProgress() {
   const [taskItem, setTaskItem] = useState();
   const [sectionId, setSectionId] = useState([]);
   const[taskCard, setTaskCard]=useState([]);
+  const [id,setid]=useState([]);
+  const [oneitemid,setoneitemid]=useState([]);
+  const[item,setitem]=useState([]);
+  const [index,setindex]=useState([])
 
   const dragmove=(documentId,item,task)=>{
  console.log(documentId,item,task)
@@ -131,6 +136,15 @@ console.log(todoData,section,done,email)
     // console.log(assignTo);
   };
   // console.log(tableId);
+  const drop=(id)=>{
+    Firebase.dragmove(documentId,oneitemid,task,id,index)
+    // console.log(documentId,oneitemid,task,id);
+
+  }
+  const over=(e)=>{
+    e.preventDefault();
+    console.log('over')
+  }
 
   return (
     <>
@@ -169,6 +183,7 @@ console.log(todoData,section,done,email)
                     <AiOutlinePlus />
                   </span>
                   <input
+                  className='text-blue-800 px-2'
                     type="text"
                     onChange={(e) => setName(e.target.value)}
                   />
@@ -176,14 +191,14 @@ console.log(todoData,section,done,email)
               </div>
 
               {/* new progress section */}
-              <div className=" max-w-5xl mx-auto mt-5 flex  gap-7 overflow-y-auto">
+              <div className=" max-w-7xl mx-auto mt-5 flex  gap-7 overflow-y-auto">
                 {section.map((item) => {
                   return (
                     <>
-                      <div className="  p-2 bg-white w-[400px]" onDragOver={console.log('over')} onDrop={console.log(item.id)}>
+                      <div className="  p-2 bg-white w-[400px]" >
                         {
                           <>
-                            <div className="relative w-full">
+                            <div className="relative w-full" id='hold' onDragEnter={()=>console.log('entered')} onDragOver={(e)=>over(e)} onDrop={(e)=>{e.preventDefault();drop(item.id)}}  >
                               <h2 className="text-white bg-gray-800 p-4">
                                 {item.data().SectionName}
                               </h2>
@@ -280,7 +295,7 @@ console.log(todoData,section,done,email)
                                   item.data().tasks.map((task, index) => {
                                     return (
                                       <>
-                                        <div className=" shadow border border-gray-300 p-2 text-sm  space-y-2 mt-3 " draggable={true} onDragStart={()=>dragmove(documentId,item.id,task)}>
+                                        <div className=" shadow border border-gray-300 p-2 text-sm  space-y-2 mt-3 " draggable={true} onDragStart={()=>dragmove(setindex(index),setoneitemid(item.id),setTask(task))} onDragEnd={console.log('end')}>
                                           <h2 className="text-center p-2 text-white bg-gray-700 rounded-t-md">
                                             {task.task}
                                           </h2>

@@ -1,4 +1,6 @@
 import { initializeApp } from "firebase/app";
+import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
 import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
@@ -278,17 +280,6 @@ export const FirebaseProvider = (props) => {
   };
 
   const moveTask = async (documentId, item, taskItem, index, itemid) => {
-   
-    // // Fetch the current data first to avoid overwriting existing likes
-    // const achievementSnapshot = await getDoc(achievementRef);
-    // const existingComments = achievementSnapshot.data().comments || [];
-
-    // // Add the new data to the existing likes array
-  //   existingComments.splice(i, 1);
-  //   // const deleteRef = getDocs(doc(db, `Board/${taskItem}/section/${}`));
-  //   const oldDocRef=doc(db, `Board/${taskItem}/section/${itemid} `)
-  //  const oldData=await getDoc(oldDocRef);
-  //  const oldtasks=oldData.data().tasks|| []
     const docRef = doc(db, `Board/${taskItem}/section/${item}`);
     const collectionRef = await getDoc(docRef);
     const existingTask = collectionRef.data().tasks || [];
@@ -303,16 +294,26 @@ export const FirebaseProvider = (props) => {
     await updateDoc(taskref,{
       tasks: existingTasksData,
     })
-    
-    console.log(taskref)
-    // const TaskRef = doc(db, `Board/${taskItem}/section/${itemid} `);
-    // const taskSnapshot=await getDoc(TaskRef)
-    // const oldtask=taskSnapshot.data().tasks || [];
-    // oldtask.splice(index,1)
-    // console.log(taskSnapshot)
-  //  console.log(oldtasks)
-
   };
+  const dragmove=async(documentId,oneitemid,task,id,index)=>{
+    console.log(documentId,oneitemid,task,id)
+    const docRef = doc(db, `Board/${documentId}/section/${id}`);
+    const collectionRef = await getDoc(docRef);
+    const existingTask = collectionRef.data().tasks || [];
+    await existingTask.push(task);
+    await updateDoc(docRef, {
+      tasks: existingTask,
+    });
+    const taskref=doc(db, `Board/${documentId}/section/${oneitemid}`)
+    const taskSnapshot = await getDoc(taskref)
+    const existingTasksData = taskSnapshot.data().tasks || [];
+    await existingTasksData.splice(index,1)
+    await updateDoc(taskref,{
+      tasks: existingTasksData,
+    })
+
+     toast.success("successfully move")
+  }
 
   // post Likes
   const [likes, setlike] = useState([0]);
@@ -605,6 +606,7 @@ export const FirebaseProvider = (props) => {
         listSection,
         listtasks,
         moveTask,
+        dragmove
       }}
     >
       {props.children}

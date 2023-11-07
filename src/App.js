@@ -35,6 +35,7 @@ import UXCV from './Containers/UXCV'
 import WordpressCV from './Containers/WordpressCV'
 import Achivement from './Containers/Achivement'
 import Addachivement from './Containers/Addachivement'
+import { ToastContainer, toast } from 'react-toastify';
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
         <PrimeReactProvider>
           {/* <Dashboardheader /> */}
           <Navbar />
+          <ToastContainer />
           <Routes>
             <Route path='/' element={<Index />} />
             <Route path='Signup' element={<Signup />} />
