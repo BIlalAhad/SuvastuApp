@@ -22,6 +22,7 @@ export default function TaskProgress() {
   const [showModal, setShowModal] = useState(false);
   const [todoData, setTodoData] = useState([]);
   const [done, setDone] = useState([]);
+  const [singleSectionId, setSingleSectionId] = useState([]);
   const Firebase = UseFirebase();
   const url = window.location.href.split('/');
   const documentId = url.pop();
@@ -78,11 +79,11 @@ export default function TaskProgress() {
   }, []);
 console.log(todoData,section,done,email)
 
-  const handleForm = (e, id) => {
+  const handleForm = (e) => {
     e.preventDefault();
     Firebase.posttask(
       documentId,
-      id,
+      singleSectionId,
       task,
       assignTo,
       description,
@@ -153,7 +154,7 @@ console.log(todoData,section,done,email)
         <div className="w-full my-20 ">
           {specificData ? (
             <div>
-              <div className="flex items-center gap-10 text-gray-200">
+              <div className="flex items-center gap-10 text-gray-800">
                 <div className="px-8 py-4">
                   <h2 className="text-2xl font-semibold">
                     Project Name: {specificData.projectname}
@@ -204,91 +205,12 @@ console.log(todoData,section,done,email)
                               </h2>
                               <span
                                 className="absolute top-2 right-2 text-white"
-                                onClick={() => setShowModal(true)}
+                                onClick={() => {setShowModal(true);setSingleSectionId(item.id)}}
                               >
                                 <AiOutlinePlus />
                               </span>
                               <div>
-                                <form
-                                  action=""
-                                  className="text-sm p-2 "
-                                  onSubmit={(e) => handleForm(e, item.id)}
-                                >
-                                  <label htmlFor="" className="text-sm">
-                                    task
-                                  </label>
-                                  <input
-                                    type="text"
-                                    className="border w-full"
-                                    onChange={(e) => setTask(e.target.value)}
-                                  />
-                                  <label htmlFor="">description</label>
-                                  <input
-                                    type="text"
-                                    className="border w-full"
-                                    onChange={(e) =>
-                                      setDescription(e.target.value)
-                                    }
-                                  />
-                                  <label htmlFor="">starting Date</label>
-                                  <input
-                                    type="text"
-                                    className="border w-full"
-                                    onChange={(e) =>
-                                      setStartingDate(e.target.value)
-                                    }
-                                  />
-                                  <label htmlFor="">Due Date</label>
-                                  <input
-                                    type="text"
-                                    className="border w-full"
-                                    onChange={(e) => setDueDate(e.target.value)}
-                                  />
-                                  <div className="mt-3 h-24 overflow-auto">
-                                    <input
-                                      type="search"
-                                      className="w-1/2 mb-4 flex items-center  mx-auto border p-2 text-sm text-center"
-                                      value={assignTo}
-                                      onChange={(e) =>
-                                        setAssignTo(e.target.value)
-                                      }
-                                      placeholder="Add task"
-                                    />
-                                    {email && email.length > 0
-                                      ? email
-                                          .filter((item) =>
-                                            item
-                                              .data()
-                                              .employemail.includes(assignTo)
-                                          )
-                                          .map((item) => {
-                                            return (
-                                              <>
-                                                <div className="flex justify-between border-b p-2  ">
-                                                  <h2
-                                                    className=""
-                                                    onClick={(e) =>
-                                                      handleChange(
-                                                        e,
-                                                        item.data().employemail
-                                                      )
-                                                    }
-                                                  >
-                                                    {item.data().employemail}
-                                                  </h2>
-                                                </div>
-                                              </>
-                                            );
-                                          })
-                                      : null}
-                                  </div>
-                                  <button
-                                    className="bg-gray-800 p-1 rounded text-white"
-                                    type="submit"
-                                  >
-                                    submit
-                                  </button>
-                                </form>
+                                
 
                                 {item.data() &&
                                   item.data().tasks &&

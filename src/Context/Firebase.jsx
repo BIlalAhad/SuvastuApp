@@ -233,7 +233,7 @@ export const FirebaseProvider = (props) => {
   // sublevel collection
 
   const posttask = async (
-    id,
+    modelFormId,
     documentId,
     task,
     assignTo,
@@ -249,14 +249,14 @@ export const FirebaseProvider = (props) => {
       dueDate,
     };
     try {
-      const BoardRef = doc(db, "Board", id, "section", documentId);
-      console.log(documentId, id);
+      const BoardRef = doc(db, "Board", modelFormId, "section", documentId);
       const Boardsnapshot = await getDoc(BoardRef);
       const existingtask = Boardsnapshot.data().tasks || [];
       existingtask.push(newData);
       await updateDoc(BoardRef, {
         tasks: existingtask,
       });
+      toast.success("successfully move")
     } catch (error) {
       console.error("Error adding a like:", error);
       // Handle the error as needed
