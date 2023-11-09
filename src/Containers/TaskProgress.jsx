@@ -1,22 +1,23 @@
-import { doc, getDoc } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
-import { AiFillPlusSquare } from 'react-icons/ai';
-import { AiOutlinePlus } from 'react-icons/ai';
-import { BsClockHistory } from 'react-icons/bs';
-import DashboardSidebar from '../Components/DashboardSidebar';
-import { UseFirebase } from '../Context/Firebase';
-import { CSSTransition } from 'react-transition-group';
-import { Link } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { doc, getDoc } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { AiFillPlusSquare } from "react-icons/ai";
+import { AiOutlinePlus } from "react-icons/ai";
+import { BsClockHistory } from "react-icons/bs";
+import DashboardSidebar from "../Components/DashboardSidebar";
+import { UseFirebase } from "../Context/Firebase";
+import { CSSTransition } from "react-transition-group";
+import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import TaskListView from "../Components/TaskListView";
 
 export default function TaskProgress() {
   const [data, setData] = useState([]);
   const [project, setProject] = useState([]);
-  const [task, setTask] = useState('');
-  const [description, setDescription] = useState('');
-  const [startingDate, setStartingDate] = useState('');
-  const [dueDate, setDueDate] = useState('');
-  const [assignTo, setAssignTo] = useState('');
+  const [task, setTask] = useState("");
+  const [description, setDescription] = useState("");
+  const [startingDate, setStartingDate] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [assignTo, setAssignTo] = useState("");
   const [specificData, setSpecificData] = useState(null);
   const [doingData, setDoingData] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -24,7 +25,7 @@ export default function TaskProgress() {
   const [done, setDone] = useState([]);
   const [singleSectionId, setSingleSectionId] = useState([]);
   const Firebase = UseFirebase();
-  const url = window.location.href.split('/');
+  const url = window.location.href.split("/");
   const documentId = url.pop();
   const [movedData, setMoveData] = useState(null);
   const [email, setEmail] = useState([]);
@@ -32,30 +33,24 @@ export default function TaskProgress() {
   const [section, setsection] = useState([]);
   const [taskItem, setTaskItem] = useState();
   const [sectionId, setSectionId] = useState([]);
-  const[taskCard, setTaskCard]=useState([]);
-  const [id,setid]=useState([]);
-  const [oneitemid,setoneitemid]=useState([]);
-  const[item,setitem]=useState([]);
-  const [index,setindex]=useState([])
+  const [taskCard, setTaskCard] = useState([]);
+  const [id, setid] = useState([]);
+  const [oneitemid, setoneitemid] = useState([]);
+  const [item, setitem] = useState([]);
+  const [index, setindex] = useState([]);
 
-  const dragmove=(documentId,item,task)=>{
- console.log(documentId,item,task)
-  }
+  const dragmove = (documentId, item, task) => {
+    console.log(documentId, item, task);
+  };
 
   useEffect(() => {
-    Firebase.getTodos(documentId).then((item) => {
-      setTodoData(item.docs);
-    });
+   
 
     Firebase.listSection(documentId).then((item) => {
       setsection(item.docs);
     });
 
-    // Firebase.listSection(documentId).then((item) => console.log(item.docs));
 
-    Firebase.getDoing(documentId).then((item) => {
-      setDoingData(item.docs);
-    });
     Firebase.DoneData(documentId).then((item) => {
       setDone(item.docs);
     });
@@ -63,21 +58,21 @@ export default function TaskProgress() {
       setEmail(item.docs);
     });
     // console.log(todoData, doingData, done);
-    const documentRef = doc(Firebase.db, 'Board', documentId);
-  
+    const documentRef = doc(Firebase.db, "Board", documentId);
+
     getDoc(documentRef)
       .then((docSnapshot) => {
         if (docSnapshot.exists()) {
           setSpecificData(docSnapshot.data());
         } else {
-          console.log('Document does not exist');
+          console.log("Document does not exist");
         }
       })
       .catch((error) => {
-        console.error('Error getting document:', error);
+        console.error("Error getting document:", error);
       });
   }, []);
-console.log(todoData,section,done,email)
+  console.log(todoData, section, done, email);
 
   const handleForm = (e) => {
     e.preventDefault();
@@ -90,21 +85,21 @@ console.log(todoData,section,done,email)
       startingDate,
       dueDate
     );
-    setAssignTo('');
-    setTask('');
-    setDescription('');
-    setStartingDate('');
-    setDueDate('');
+    setAssignTo("");
+    setTask("");
+    setDescription("");
+    setStartingDate("");
+    setDueDate("");
   };
 
   const move = (documentId) => {
-    console.log('moving');
+    console.log("moving");
     Firebase.clearTodos(documentId, movedData);
   };
 
   function handleDragEnter(event) {
     event.preventDefault();
-    console.log('enter');
+    console.log("enter");
   }
 
   function handleDragOver(event) {
@@ -114,19 +109,19 @@ console.log(todoData,section,done,email)
   function handleDrop(event) {
     event.preventDefault();
     Firebase.clearTodos(documentId, movedData);
-    console.log('drop');
+    console.log("drop");
   }
 
   function handleDrop2(event) {
     event.preventDefault();
     Firebase.movetoDone(documentId, movedData);
-    console.log('drop');
+    console.log("drop");
   }
   const toggle = () => {
-    const toggle = document.getElementById('progress');
-    const list = document.getElementById('list');
-    toggle.classList.toggle('hidden');
-    list.classList.toggle('hidden');
+    const toggle = document.getElementById("progress");
+    const list = document.getElementById("list");
+    toggle.classList.toggle("hidden");
+    list.classList.toggle("hidden");
     // console.log("toggle");
   };
   const handleChange = (e, email) => {
@@ -137,15 +132,22 @@ console.log(todoData,section,done,email)
     // console.log(assignTo);
   };
   // console.log(tableId);
-  const drop=(id)=>{
-    Firebase.dragmove(documentId,oneitemid,task,id,index)
+  const drop = (id) => {
+    Firebase.dragmove(documentId, oneitemid, task, id, index);
     // console.log(documentId,oneitemid,task,id);
-
-  }
-  const over=(e)=>{
+  };
+  const over = (e) => {
     e.preventDefault();
-    console.log('over')
-  }
+    // console.log("over");
+  };
+
+  const listView = () => {
+    console.log("cardview");
+    const card_view = document.getElementById("cardView");
+    const Tasklist_view = document.getElementById("Tasklist");
+    card_view.classList.toggle("hidden");
+    Tasklist_view.classList.toggle("hidden");
+  };
 
   return (
     <>
@@ -166,67 +168,94 @@ console.log(todoData,section,done,email)
                     Project Type: {specificData.ProjectType}
                   </p>
                 </div>
-                <label
-                  class="relative inline-flex items-center cursor-pointer"
-                  onChange={toggle}
-                >
-                  <input type="checkbox" value="" class="sr-only peer" />
-                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                  <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300 text-white">
-                    list view
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    value=""
+                    class="sr-only peer"
+                    onClick={() => listView()}
+                  />
+                  <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                  <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                    ListView
                   </span>
                 </label>
-                <div>
+                <div className="flex gap-2">
+                  <input
+                    className="text-blue-800 px-2 shadow border"
+                    type="text"
+                    placeholder="add section"
+                    onChange={(e) => setName(e.target.value)}
+                  />
                   <span
                     className="text-2xl font-bold"
                     onClick={() => Firebase.createsection(documentId, name)}
                   >
                     <AiOutlinePlus />
                   </span>
-                  <input
-                  className='text-blue-800 px-2'
-                    type="text"
-                    onChange={(e) => setName(e.target.value)}
-                  />
                 </div>
               </div>
 
               {/* new progress section */}
-              <div className=" max-w-7xl mx-auto mt-5 flex  gap-7 overflow-y-auto">
+              <div
+                className=" max-w-7xl mx-auto mt-5 flex  gap-7 overflow-y-auto"
+                id="cardView"
+              >
                 {section.map((item) => {
                   return (
                     <>
-                      <div className="  p-2 bg-white w-[400px]" >
+                      <div className="  p-2 bg-white w-[400px] ">
                         {
                           <>
-                            <div className="relative w-full" id='hold' onDragEnter={()=>console.log('entered')} onDragOver={(e)=>over(e)} onDrop={(e)=>{e.preventDefault();drop(item.id)}}  >
-                              <h2 className="text-white bg-gray-800 p-4">
+                            <div
+                              className="relative w-full "
+                              id="hold"
+                              onDragEnter={() => console.log("entered")}
+                              onDragOver={(e) => over(e)}
+                              onDrop={(e) => {
+                                e.preventDefault();
+                                drop(item.id);
+                              }}
+                            >
+                              <h2 className="text-white bg-gray-800 p-4 w-[380px]">
                                 {item.data().SectionName}
                               </h2>
                               <span
                                 className="absolute top-2 right-2 text-white"
-                                onClick={() => {setShowModal(true);setSingleSectionId(item.id)}}
+                                onClick={() => {
+                                  setShowModal(true);
+                                  setSingleSectionId(item.id);
+                                }}
                               >
                                 <AiOutlinePlus />
                               </span>
                               <div>
-                                
-
                                 {item.data() &&
                                   item.data().tasks &&
                                   item.data().tasks.map((task, index) => {
                                     return (
                                       <>
-                                        <div className=" shadow border border-gray-300 p-2 text-sm  space-y-2 mt-3 " draggable={true} onDragStart={()=>dragmove(setindex(index),setoneitemid(item.id),setTask(task))} onDragEnd={console.log('end')}>
+                                        <div
+                                          className=" shadow border border-gray-300 p-2 text-sm  space-y-2 mt-3 "
+                                          draggable={true}
+                                          onDragStart={() =>
+                                            dragmove(
+                                              setindex(index),
+                                              setoneitemid(item.id),
+                                              setTask(task)
+                                            )
+                                          }
+                                          onDragEnd={console.log("end")}
+                                        >
                                           <h2 className="text-center p-2 text-white bg-gray-700 rounded-t-md">
                                             {task.task}
                                           </h2>
                                           <p className="flex justify-between">
                                             <span className="font-semibold">
-                                              {' '}
+                                              {" "}
                                               assign to:
-                                            </span>{' '}
-                                            <span>{task.assignTo}</span>{' '}
+                                            </span>{" "}
+                                            <span>{task.assignTo}</span>{" "}
                                           </p>
                                           <div className="flex justify-between items-center">
                                             <span>{task.startingDate}</span>
@@ -240,12 +269,11 @@ console.log(todoData,section,done,email)
 
                                           {
                                             <div className="flex justify-between items-center gap-2">
-                                             
                                               <select
                                                 className="w-full border p-1"
                                                 name=""
                                                 id=""
-                                                value={'test'}
+                                                value={"test"}
                                                 onChange={(e) =>
                                                   setTaskItem(e.target.value)
                                                 }
@@ -253,9 +281,12 @@ console.log(todoData,section,done,email)
                                                 {section.map((item) => {
                                                   return (
                                                     <>
-                                                    <option value={item.id}>
-                                                      {item.data().SectionName}
-                                                    </option>
+                                                      <option value={item.id}>
+                                                        {
+                                                          item.data()
+                                                            .SectionName
+                                                        }
+                                                      </option>
                                                     </>
                                                   );
                                                 })}
@@ -269,7 +300,6 @@ console.log(todoData,section,done,email)
                                                     documentId,
                                                     index,
                                                     item.id
-                                                    
                                                   )
                                                 }
                                                 className="bg-gray-600 p-1 text-white"
@@ -292,6 +322,11 @@ console.log(todoData,section,done,email)
                 })}
               </div>
               {/* new progress section */}
+             {/* list view */}
+             <div className=" max-w-7xl mx-auto mt-5 hidden " id="Tasklist">
+                <TaskListView documentId={documentId}/>
+              </div>
+             {/* list view */}
             </div>
           ) : (
             <div>Loading ...</div>
