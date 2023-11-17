@@ -30,7 +30,7 @@ export default function TaskProgress() {
   const [movedData, setMoveData] = useState(null);
   const [email, setEmail] = useState([]);
   const [name, setName] = useState([]);
-  const [section, setsection] = useState([]);
+  const [projectData, setProjectData] = useState([]);
   const [taskItem, setTaskItem] = useState();
   const [sectionId, setSectionId] = useState([]);
   const [taskCard, setTaskCard] = useState([]);
@@ -38,26 +38,34 @@ export default function TaskProgress() {
   const [oneitemid, setoneitemid] = useState([]);
   const [item, setitem] = useState([]);
   const [index, setindex] = useState([]);
+  const [controlLoop, setcontrolloop] = useState([])
+  const [projectCard,setProjectCard]=useState([]);
+  const [dragging, setDragging] = useState(false);
 
   const dragmove = (documentId, item, task) => {
     console.log(documentId, item, task);
   };
 
-  useEffect(() => {
-   
-
+  useEffect(()=>{
+    var data = [];
     Firebase.listSection(documentId).then((item) => {
-      setsection(item.docs);
-    });
+      // setProject(item.docs);
 
+      item.docs.map((card) => {
+        data.push({
+            sectionId: card.id,
+            sectionName: card.data().SectionName,
+            tasks: card.data().tasks
+        });
+      });
 
-    Firebase.DoneData(documentId).then((item) => {
-      setDone(item.docs);
+      setProjectData(data);
+      // setProjectCard()
     });
+    
     Firebase.listAllMembers().then((item) => {
       setEmail(item.docs);
     });
-    // console.log(todoData, doingData, done);
     const documentRef = doc(Firebase.db, "Board", documentId);
 
     getDoc(documentRef)
@@ -71,8 +79,13 @@ export default function TaskProgress() {
       .catch((error) => {
         console.error("Error getting document:", error);
       });
-  }, []);
-  console.log(todoData, section, done, email);
+  },[Firebase.LoopControll]);
+// useEffect(()=>{
+//   setcontrolloop(Firebase.LoopControll)
+//   console.log(controlLoop)
+// },[controlLoop])
+
+  // console.log( section, email);
 
   const handleForm = (e) => {
     e.preventDefault();
@@ -106,11 +119,11 @@ export default function TaskProgress() {
     event.preventDefault();
   }
 
-  function handleDrop(event) {
-    event.preventDefault();
-    Firebase.clearTodos(documentId, movedData);
-    console.log("drop");
-  }
+  // function handleDrop(event) {
+  //   event.preventDefault();
+  //   Firebase.clearTodos(documentId, movedData);
+  //   console.log("drop");
+  // }
 
   function handleDrop2(event) {
     event.preventDefault();
@@ -125,17 +138,27 @@ export default function TaskProgress() {
     // console.log("toggle");
   };
   const handleChange = (e, email) => {
-    // if(e.currentTarget.checked && !teamMembersEmail.includes(email)) {
-    // const greenbg=document.getElementById('green')
-    // email.classList.toggle('bg-green')
     setAssignTo(email);
-    // console.log(assignTo);
   };
-  // console.log(tableId);
   const drop = (id) => {
+    setProjectCard(
+      projectData.map((section) => {
+        if (section.sectionId === oneitemid) {
+          // Ensure section.tasks is an array before using push
+          section.tasks = section.tasks || [];
+          section.tasks.splice(index, 1);
+        }
+        if (section.sectionId === id) {
+          // Ensure section.tasks is an array before using push
+          section.tasks = section.tasks || [];
+          section.tasks.push(task);
+        }
+        console.log(section.tasks);
+      })
+    );
     Firebase.dragmove(documentId, oneitemid, task, id, index);
-    // console.log(documentId,oneitemid,task,id);
   };
+  
   const over = (e) => {
     e.preventDefault();
     // console.log("over");
@@ -201,7 +224,7 @@ export default function TaskProgress() {
                 className=" max-w-7xl mx-auto mt-5 flex  gap-7 overflow-y-auto"
                 id="cardView"
               >
-                {section.map((item) => {
+                {projectData.map((item) => {
                   return (
                     <>
                       <div className="  p-2 bg-white w-[400px] ">
@@ -213,39 +236,48 @@ export default function TaskProgress() {
                               onDragEnter={() => console.log("entered")}
                               onDragOver={(e) => over(e)}
                               onDrop={(e) => {
-                                e.preventDefault();
-                                drop(item.id);
+                                // console.log(`itemid ${item.sectionId}`)
+                                // const hold=document.getElementById('hold')
+                                // const card=document.getElementById('card')
+                                // e.target.append(card)
+                                
+                                // e.preventDefault();
+                                drop(item.sectionId);
                               }}
                             >
                               <h2 className="text-white bg-gray-800 p-4 w-[380px]">
-                                {item.data().SectionName}
+                                {item.sectionName}
                               </h2>
                               <span
                                 className="absolute top-2 right-2 text-white"
                                 onClick={() => {
+                                  setSingleSectionId(item.sectionId);
                                   setShowModal(true);
-                                  setSingleSectionId(item.id);
                                 }}
                               >
                                 <AiOutlinePlus />
                               </span>
                               <div>
-                                {item.data() &&
-                                  item.data().tasks &&
-                                  item.data().tasks.map((task, index) => {
+                                {item.tasks &&
+                                  item.tasks.map((task, index) => {
                                     return (
                                       <>
                                         <div
-                                          className=" shadow border border-gray-300 p-2 text-sm  space-y-2 mt-3 "
+                                        id="card"
+                                        className={`shadow border border-gray-300 p-2 text-sm space-y-4 mt-3 ${dragging ? 'dragging' : ''}`}
                                           draggable={true}
-                                          onDragStart={() =>
-                                            dragmove(
-                                              setindex(index),
-                                              setoneitemid(item.id),
-                                              setTask(task)
-                                            )
+                                          onDragStart={(e) =>
+                                           {
+                                             dragmove(
+                                               setindex(index),
+                                               setoneitemid(item.sectionId),
+                                               setTask(task),
+                                               );
+                                              //  e.currentTarget.style.visibility = 'hidden';
+                                              console.log(documentId,oneitemid,task,index)
+                                           }
                                           }
-                                          onDragEnd={console.log("end")}
+                                          onDragEnd={()=>console.log("end")}
                                         >
                                           <h2 className="text-center p-2 text-white bg-gray-700 rounded-t-md">
                                             {task.task}
@@ -268,45 +300,43 @@ export default function TaskProgress() {
                                           </div>
 
                                           {
-                                            <div className="flex justify-between items-center gap-2">
-                                              <select
-                                                className="w-full border p-1"
-                                                name=""
-                                                id=""
-                                                value={"test"}
-                                                onChange={(e) =>
-                                                  setTaskItem(e.target.value)
-                                                }
-                                              >
-                                                {section.map((item) => {
-                                                  return (
-                                                    <>
-                                                      <option value={item.id}>
-                                                        {
-                                                          item.data()
-                                                            .SectionName
-                                                        }
-                                                      </option>
-                                                    </>
-                                                  );
-                                                })}
-                                              </select>
-                                              {console.log()}
-                                              <button
-                                                onClick={() =>
-                                                  Firebase.moveTask(
-                                                    task,
-                                                    taskItem,
-                                                    documentId,
-                                                    index,
-                                                    item.id
-                                                  )
-                                                }
-                                                className="bg-gray-600 p-1 text-white"
-                                              >
-                                                move
-                                              </button>
-                                            </div>
+                                            // <div className="flex justify-between items-center gap-2">
+                                            //   <select
+                                            //     className="w-full border p-1"
+                                            //     name=""
+                                            //     id=""
+                                            //     value={"test"}
+                                            //     onChange={(e) =>
+                                            //       setTaskItem(e.target.value)
+                                            //     }
+                                            //   >
+                                            //     {projectData.map((section) => {
+                                            //       return (
+                                            //         <>
+                                            //           <option value={section.sectionId}>
+                                            //             {
+                                            //               section.sectionName
+                                            //             }
+                                            //           </option>
+                                            //         </>
+                                            //       );
+                                            //     })}
+                                            //   </select>
+                                            //   <button
+                                            //     onClick={() =>
+                                            //       Firebase.moveTask(
+                                            //         task,
+                                            //         taskItem,
+                                            //         documentId,
+                                            //         index,
+                                            //         item.id
+                                            //       )
+                                            //     }
+                                            //     className="bg-gray-600 p-1 text-white"
+                                            //   >
+                                            //     move
+                                            //   </button>
+                                            // </div>
                                           }
                                         </div>
                                       </>

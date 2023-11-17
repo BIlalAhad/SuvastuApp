@@ -78,3 +78,7 @@ body {
   margin: 3px 0;
 }
 
+.dragged-item {
+  transition: transform 0.3s ease-in-out; /* Add your desired transition properties */
+}
+

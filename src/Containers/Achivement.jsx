@@ -8,6 +8,7 @@ export default function Achivement() {
   const [data, setData] = useState([]);
   const [likes, setLikes] = useState([]);
   const [comment, setComment] = useState([]);
+  const [controlLoop, setControlLoop] = useState([0]);
   // console.log(comment);
 
   const Firebase = UseFirebase();
@@ -18,7 +19,8 @@ export default function Achivement() {
     console.log(data[0]);
     // Firebase.getlikes().then(item => setlikes(item.docs.length))
     //  console.log(likes)
-  }, []);
+  }, [controlLoop]);
+  // console.log(data)
 
   return (
     <div className="my-10">
@@ -52,7 +54,7 @@ export default function Achivement() {
             <div className="p-4 bg-gray-100 mt-2 flex items-center gap-14">
               <button
                 className="text-xl flex items-end gap-2"
-                onClick={() => Firebase.postlikes(item.id)}
+                onClick={() => {Firebase.postlikes(item.id);setControlLoop(controlLoop+1)}}
               >
                 <AiFillLike />
                 <span className="text-sm">
@@ -76,7 +78,7 @@ export default function Achivement() {
                 />
                 <button
                   className="bg-orange-500 text-white rounded p-2"
-                  onClick={() => Firebase.postComment(item.id, comment)}
+                  onClick={() => {Firebase.postComment(item.id, comment);setControlLoop(controlLoop+1)}}
                 >
                   comment
                 </button>
