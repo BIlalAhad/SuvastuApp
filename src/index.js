@@ -5,6 +5,7 @@ import { FirebaseProvider } from './Context/Firebase'
 import './index.css'
 import reportWebVitals from './reportWebVitals'
 
+
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
   <FirebaseProvider>

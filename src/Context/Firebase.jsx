@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { ToastContainer, toast } from 'react-toastify';
-  import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
@@ -256,12 +256,12 @@ export const FirebaseProvider = (props) => {
       await updateDoc(BoardRef, {
         tasks: existingtask,
       });
-      toast.success("successfully move")
+      toast.success("successfully move");
     } catch (error) {
       console.error("Error adding a like:", error);
       // Handle the error as needed
     }
-    setLoopControll(LoopControll+1)
+    setLoopControll(LoopControll + 1);
   };
 
   const listtasks = async (documentId, id) => {
@@ -279,7 +279,7 @@ export const FirebaseProvider = (props) => {
     });
     alert("success");
   };
-  const [LoopControll,setLoopControll]=useState([0])
+  const [LoopControll, setLoopControll] = useState([0]);
   const moveTask = async (documentId, item, taskItem, index, itemid) => {
     const docRef = doc(db, `Board/${taskItem}/section/${item}`);
     const collectionRef = await getDoc(docRef);
@@ -288,18 +288,18 @@ export const FirebaseProvider = (props) => {
     await updateDoc(docRef, {
       tasks: existingTask,
     });
-    const taskref=doc(db, `Board/${taskItem}/section/${itemid}`)
-    const taskSnapshot = await getDoc(taskref)
+    const taskref = doc(db, `Board/${taskItem}/section/${itemid}`);
+    const taskSnapshot = await getDoc(taskref);
     const existingTasksData = taskSnapshot.data().tasks || [];
-    existingTasksData.splice(index,1)
-    await updateDoc(taskref,{
+    existingTasksData.splice(index, 1);
+    await updateDoc(taskref, {
       tasks: existingTasksData,
-    })
-    setLoopControll(LoopControll+1)
+    });
+    setLoopControll(LoopControll + 1);
     // window.location.reload()
   };
-  const dragmove=async(documentId,oneitemid,task,id,index)=>{
-    console.log(documentId,oneitemid,task,id)
+  const dragmove = async (documentId, oneitemid, task, id, index) => {
+    console.log(documentId, oneitemid, task, id);
     const docRef = doc(db, `Board/${documentId}/section/${id}`);
     const collectionRef = await getDoc(docRef);
     const existingTask = collectionRef.data().tasks || [];
@@ -307,21 +307,20 @@ export const FirebaseProvider = (props) => {
     await updateDoc(docRef, {
       tasks: existingTask,
     });
-    const taskref=doc(db, `Board/${documentId}/section/${oneitemid}`)
-    const taskSnapshot = await getDoc(taskref)
+    const taskref = doc(db, `Board/${documentId}/section/${oneitemid}`);
+    const taskSnapshot = await getDoc(taskref);
     const existingTasksData = taskSnapshot.data().tasks || [];
-    await existingTasksData.splice(index,1)
-    await updateDoc(taskref,{
+    await existingTasksData.splice(index, 1);
+    await updateDoc(taskref, {
       tasks: existingTasksData,
-    })
+    });
 
-     toast.success("successfully move")
-     setLoopControll(LoopControll+1)
+    toast.success("successfully move");
+    setLoopControll(LoopControll + 1);
     //  window.location.reload()
-  }
+  };
 
   // Perform tasklist update on task progress page
- 
 
   // post Likes
   const [likes, setlike] = useState([0]);
@@ -414,62 +413,24 @@ export const FirebaseProvider = (props) => {
     return getDocs(db, "Achivement");
   };
 
+  const deleteSingleTask = async (projectID, sectionID, index) => {
+    // console.log(index)
+    // console.log(projectID,sectionID,index)
+    const TaskRef = doc(db, "Board", projectID, "section", sectionID);
+    const TaskSnapshot = await getDoc(TaskRef);
+    const existingTask = TaskSnapshot.data().tasks || [];
+    console.log(existingTask);
+    existingTask.splice(index, 1);
+    await updateDoc(TaskRef, {
+      tasks: existingTask,
+    });
+    setLoopControll(LoopControll + 1);
+    toast.info("Deleted");
+  };
+
   const getAChivement = async () => {
     return getDocs(collection(db, "Achivement"));
   };
-
-  // // get data from document sub-collection
-  // const getTodos = async (documentId) => {
-  //   const documentReference = doc(db, "Board", documentId);
-  //   const collectionReference = collection(documentReference, "todo");
-  //   const querySnapshot = await getDocs(collectionReference);
-  //   return querySnapshot;
-  // };
-
-  // move data from one collection to another collection
-  // const clearTodos = async (documentId, item) => {
-  //   console.log(item.id);
-  //   const collectionRef = collection(db, "Board", documentId, "doing");
-  //   const result = await addDoc(collectionRef, {
-  //     task: item.data().task,
-  //     assignTo: item.data().assignTo,
-  //     description: item.data().description,
-  //     startingdate: item.data().startingDate,
-  //     dueDate: item.data().dueDate,
-  //   });
-
-  //   await deleteDoc(doc(db, "Board", documentId, "todo", item.id));
-  // };
-
-  // move data from one collection to another collection
-  // const movetoDone = async (documentId, items) => {
-  //   console.log(items);
-  //   const collectionRef = collection(db, "Board", documentId, "done");
-  //   const result = await addDoc(collectionRef, {
-  //     task: items.data().task,
-  //     DoneBy: items.data().assignTo,
-  //     description: items.data().description,
-  //     dueDate: items.data().dueDate,
-  //   });
-
-  //   await deleteDoc(doc(db, "Board", documentId, "doing", items.id));
-  // };
-
-  // get data from document sub-collection
-  // const getDoing = async (documentId) => {
-  //   const documentReference = doc(db, "Board", documentId);
-  //   const collectionReference = collection(documentReference, "doing");
-  //   const querySnapshot = await getDocs(collectionReference);
-  //   return querySnapshot;
-  // };
-
-  // get data from document sub-collection
-  // const DoneData = async (documentId) => {
-  //   const documentReference = doc(db, "Board", documentId);
-  //   const collectionReference = collection(documentReference, "done");
-  //   const querySnapshot = await getDocs(collectionReference);
-  //   return querySnapshot;
-  // };
 
   const listAllCV = () => {
     return getDocs(collection(db, "CV"));
@@ -531,7 +492,7 @@ export const FirebaseProvider = (props) => {
     addDoc(collection(db, "Board", id, "section"), {
       SectionName: name,
     });
-    setLoopControll(LoopControll+1)
+    setLoopControll(LoopControll + 1);
   };
 
   const listSection = async (documentId) => {
@@ -558,6 +519,22 @@ export const FirebaseProvider = (props) => {
       .catch((error) => {
         console.error("Error getting document:", error);
       });
+  };
+
+  // state for model
+  const [showModal, setShowModal] = useState(false);
+  const [projectID,setProjectId]=useState();
+  const [sectionID,setSectionId] = useState();
+  const [TaskIndex,setTaskIndex] = useState();
+  
+
+  const updateTask = async(data) => {
+    // const TaskRef = doc(db, "Board", projectID, "section", sectionID);
+    // const TaskSnapshot = await getDoc(TaskRef);
+    // const existingTask = TaskSnapshot.data().tasks || [];
+    // existingTask.push(data);
+    console.log(projectID,sectionID,TaskIndex,data)
+
   };
 
   return (
@@ -604,7 +581,17 @@ export const FirebaseProvider = (props) => {
         listtasks,
         moveTask,
         dragmove,
-        LoopControll
+        LoopControll,
+        showModal,
+        setShowModal,
+        updateTask,
+        deleteSingleTask,
+        setProjectId,
+        setSectionId,
+        setTaskIndex,
+        projectID,
+        sectionID,
+        TaskIndex,
       }}
     >
       {props.children}

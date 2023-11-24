@@ -1,6 +1,7 @@
 import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { AiFillPlusSquare } from "react-icons/ai";
+import { FaEdit } from "react-icons/fa";
 import { AiOutlinePlus } from "react-icons/ai";
 import { BsClockHistory } from "react-icons/bs";
 import DashboardSidebar from "../Components/DashboardSidebar";
@@ -9,6 +10,8 @@ import { CSSTransition } from "react-transition-group";
 import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import TaskListView from "../Components/TaskListView";
+import TaskUpdationFrom from "../Components/TaskUpdationFrom";
+import { RiDeleteBin5Fill } from "react-icons/ri";
 
 export default function TaskProgress() {
   const [data, setData] = useState([]);
@@ -38,31 +41,33 @@ export default function TaskProgress() {
   const [oneitemid, setoneitemid] = useState([]);
   const [item, setitem] = useState([]);
   const [index, setindex] = useState([]);
-  const [controlLoop, setcontrolloop] = useState([])
-  const [projectCard,setProjectCard]=useState([]);
+  const [controlLoop, setcontrolloop] = useState([]);
+  const [projectCard, setProjectCard] = useState([]);
   const [dragging, setDragging] = useState(false);
+  const[sectionID, setSectionID] = useState([]);
+  
 
   const dragmove = (documentId, item, task) => {
     console.log(documentId, item, task);
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     var data = [];
     Firebase.listSection(documentId).then((item) => {
       // setProject(item.docs);
 
       item.docs.map((card) => {
         data.push({
-            sectionId: card.id,
-            sectionName: card.data().SectionName,
-            tasks: card.data().tasks
+          sectionId: card.id,
+          sectionName: card.data().SectionName,
+          tasks: card.data().tasks,
         });
       });
 
       setProjectData(data);
       // setProjectCard()
     });
-    
+
     Firebase.listAllMembers().then((item) => {
       setEmail(item.docs);
     });
@@ -79,11 +84,11 @@ export default function TaskProgress() {
       .catch((error) => {
         console.error("Error getting document:", error);
       });
-  },[Firebase.LoopControll]);
-// useEffect(()=>{
-//   setcontrolloop(Firebase.LoopControll)
-//   console.log(controlLoop)
-// },[controlLoop])
+  }, [Firebase.LoopControll]);
+  // useEffect(()=>{
+  //   setcontrolloop(Firebase.LoopControll)
+  //   console.log(controlLoop)
+  // },[controlLoop])
 
   // console.log( section, email);
 
@@ -158,7 +163,7 @@ export default function TaskProgress() {
     );
     Firebase.dragmove(documentId, oneitemid, task, id, index);
   };
-  
+
   const over = (e) => {
     e.preventDefault();
     // console.log("over");
@@ -170,6 +175,12 @@ export default function TaskProgress() {
     const Tasklist_view = document.getElementById("Tasklist");
     card_view.classList.toggle("hidden");
     Tasklist_view.classList.toggle("hidden");
+  };
+
+  const TaskEditingForm = (index,documentId,sectionId) => {   
+   
+   
+    console.log(index, documentId, sectionId)
   };
 
   return (
@@ -240,7 +251,7 @@ export default function TaskProgress() {
                                 // const hold=document.getElementById('hold')
                                 // const card=document.getElementById('card')
                                 // e.target.append(card)
-                                
+
                                 // e.preventDefault();
                                 drop(item.sectionId);
                               }}
@@ -263,24 +274,47 @@ export default function TaskProgress() {
                                     return (
                                       <>
                                         <div
-                                        id="card"
-                                        className={`shadow border border-gray-300 p-2 text-sm space-y-4 mt-3 ${dragging ? 'dragging' : ''}`}
+                                          id="card"
+                                          className={`shadow border border-gray-300 p-2 text-sm space-y-4 mt-3 ${
+                                            dragging ? "dragging" : ""
+                                          }`}
                                           draggable={true}
-                                          onDragStart={(e) =>
-                                           {
-                                             dragmove(
-                                               setindex(index),
-                                               setoneitemid(item.sectionId),
-                                               setTask(task),
-                                               );
-                                              //  e.currentTarget.style.visibility = 'hidden';
-                                              console.log(documentId,oneitemid,task,index)
-                                           }
-                                          }
-                                          onDragEnd={()=>console.log("end")}
+                                          onDragStart={(e) => {
+                                            dragmove(
+                                              setindex(index),
+                                              setoneitemid(item.sectionId),
+                                              setTask(task)
+                                            );
+                                            //  e.currentTarget.style.visibility = 'hidden';
+                                            console.log(
+                                              documentId,
+                                              oneitemid,
+                                              task,
+                                              index
+                                            );
+                                          }}
+                                          onDragEnd={() => console.log("end")}
                                         >
-                                          <h2 className="text-center p-2 text-white bg-gray-700 rounded-t-md">
-                                            {task.task}
+                                          <h2 className="text-center p-2 text-white bg-gray-700 rounded-t-md flex items-center justify-between">
+                                            <span>{task.task}</span>
+                                            <div className="flex gap-3 items-center ">
+                                            <span className="text-lg text-red-500"
+                                              onClick={() => {Firebase.deleteSingleTask(documentId,item.sectionId,index)}}
+                                            >
+                                              <RiDeleteBin5Fill />
+                                            </span>
+                                            <span classtext-lg
+                                              onClick={() => {
+                                                Firebase.setProjectId(documentId);
+                                                Firebase.setSectionId(item.sectionId);
+                                                Firebase.setTaskIndex(index);
+                                                Firebase.setShowModal(true);
+                                               
+                                              }}
+                                            >
+                                              <FaEdit />
+                                            </span>
+                                            </div>
                                           </h2>
                                           <p className="flex justify-between">
                                             <span className="font-semibold">
@@ -352,11 +386,11 @@ export default function TaskProgress() {
                 })}
               </div>
               {/* new progress section */}
-             {/* list view */}
-             <div className=" max-w-7xl mx-auto mt-5 hidden " id="Tasklist">
-                <TaskListView documentId={documentId}/>
+              {/* list view */}
+              <div className=" max-w-7xl mx-auto mt-5 hidden " id="Tasklist">
+                <TaskListView documentId={documentId} />
               </div>
-             {/* list view */}
+              {/* list view */}
             </div>
           ) : (
             <div>Loading ...</div>
@@ -472,6 +506,7 @@ export default function TaskProgress() {
           </div>
         </div>
       ) : null}
+      <TaskUpdationFrom index={index} sectionID={singleSectionId} documentId={documentId} />
     </>
   );
 }
