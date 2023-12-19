@@ -1,6 +1,9 @@
 import { initializeApp } from "firebase/app";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+// import 'firebase/messaging';
+import { messaging } from "firebase/messaging";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
@@ -51,7 +54,9 @@ const firebaseapp = initializeApp(firebaseConfig);
 const storage = getStorage(firebaseapp);
 const db = getFirestore(firebaseapp);
 const FirebaseAuth = getAuth(firebaseapp);
-const provider = new GoogleAuthProvider();
+const provider = new GoogleAuthProvider(); 
+const messagingInstance = getMessaging(firebaseapp);
+// const messagingInstance = firebaseMessaging(firebaseapp);
 // const firestore = db;
 export const FirebaseProvider = (props) => {
   const [user, setUser] = useState(null);
@@ -227,7 +232,7 @@ export const FirebaseProvider = (props) => {
       teamMembersEmail,
     });
 
-    console.log(teamMembersEmail);
+    // console.log(teamMembersEmail);
   };
 
   // sublevel collection
@@ -299,7 +304,7 @@ export const FirebaseProvider = (props) => {
     // window.location.reload()
   };
   const dragmove = async (documentId, oneitemid, task, id, index) => {
-    console.log(documentId, oneitemid, task, id);
+    // console.log(documentId, oneitemid, task, id);
     const docRef = doc(db, `Board/${documentId}/section/${id}`);
     const collectionRef = await getDoc(docRef);
     const existingTask = collectionRef.data().tasks || [];
@@ -356,7 +361,7 @@ export const FirebaseProvider = (props) => {
 
   const getlikes = async () => {
     const data = getDocs(collection(db, "Achivement"));
-    console.log(data.docs[0]);
+    // console.log(data.docs[0]);
   };
 
   const postComment = async (id, comment) => {
@@ -387,7 +392,7 @@ export const FirebaseProvider = (props) => {
   };
 
   const deletecomment = async (id, i) => {
-    console.log(id, i);
+    // console.log(id, i);
     try {
       // Get the reference to the Achievement document
       const achievementRef = doc(db, "Achivement", id);
@@ -419,7 +424,7 @@ export const FirebaseProvider = (props) => {
     const TaskRef = doc(db, "Board", projectID, "section", sectionID);
     const TaskSnapshot = await getDoc(TaskRef);
     const existingTask = TaskSnapshot.data().tasks || [];
-    console.log(existingTask);
+    // console.log(existingTask);
     existingTask.splice(index, 1);
     await updateDoc(TaskRef, {
       tasks: existingTask,
@@ -448,7 +453,7 @@ export const FirebaseProvider = (props) => {
     await deleteDoc(doc(db, "CV", path));
   };
   const deleteAchivement = async (path) => {
-    console.log(path);
+    // console.log(path);
     await deleteDoc(doc(db, "Achivement", path));
   };
   const updateAchivement = async (path) => {
@@ -529,13 +534,30 @@ export const FirebaseProvider = (props) => {
   
 
   const updateTask = async(data) => {
-    // const TaskRef = doc(db, "Board", projectID, "section", sectionID);
-    // const TaskSnapshot = await getDoc(TaskRef);
-    // const existingTask = TaskSnapshot.data().tasks || [];
-    // existingTask.push(data);
-    console.log(projectID,sectionID,TaskIndex,data)
+    const TaskRef = doc(db, "Board", projectID, "section", sectionID);
+    const TaskSnapshot = await getDoc(TaskRef);
+    const existingTask = TaskSnapshot.data().tasks || [];
+    existingTask.push(data);
+    existingTask.splice(TaskIndex,1)
+    // console.log(existingTask.length)
+    await updateDoc(TaskRef, {
+      tasks: existingTask,
+    });
+    setLoopControll(LoopControll + 1);
+    toast.info("updated");
+
+    // console.log(`testest`, data , projectID,sectionID,TaskIndex)
 
   };
+
+  // useEffect(()=>{
+  //   const key=getToken(messagingInstance, {vapidKey: "BN8qO0QHcZFy_q8_Vs6MnyLIAtvSmnlWJh-Mn7IBGv1LBSoaDkASCIdtt5_wmwte7sjmwh2Xvy9JZg2oOStrnoM"});
+  //   console.log(`testkey`, key)
+  // },[])
+
+
+
+ 
 
   return (
     <FirebaseContext.Provider
@@ -547,6 +569,7 @@ export const FirebaseProvider = (props) => {
         uploadLogo,
         AddEmploy,
         db,
+        messagingInstance,
         project,
         listAllMembers,
         postjob,

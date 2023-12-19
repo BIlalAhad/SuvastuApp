@@ -74,6 +74,21 @@ export default function Navbar() {
       <Link to="/team" className="text-gray-400 hover:text-white transition">Team</Link>
       <Link to="/jobs" className="text-gray-400 hover:text-white transition">JOBS</Link>
       <Link to="/Dashboard" className="text-gray-400 hover:text-white transition">Dashboard</Link>
+      {/* <Link>
+              <li className='bg-[rgb(243,98,36)] p-2 text-white rounded-md bg-gradient-to-r  hover:from-blue-500 hover:to-orange-500 hover:cursor-pointer'>
+                LOGOUT
+              </li>
+            </Link>
+            <Link to='Signin'>
+              <li className='bg-[rgb(243,98,36)] p-2 text-white rounded-md bg-gradient-to-r  hover:from-blue-500 hover:to-orange-500 hover:cursor-pointer'>
+                SignIn
+              </li>
+            </Link>
+            <Link to='Signup'>
+              <li className='bg-[rgb(243,98,36)] p-2 text-white rounded-md bg-gradient-to-r  hover:from-blue-500 hover:to-orange-500 hover:cursor-pointer'>
+                SignUp
+              </li>
+            </Link> */}
     </div>
 
     {/* Section 3: User Account (if needed) */}

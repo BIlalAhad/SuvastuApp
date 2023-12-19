@@ -28,7 +28,7 @@ export default function TaskUpdationFrom(props) {
       
     }
     
-    console.log(data)
+    // console.log(data)
     
     const HandleForm = (e) => {
       e.preventDefault()
@@ -108,17 +108,17 @@ export default function TaskUpdationFrom(props) {
                   </div>
                 </div>
                 <div className="my-12 h-48 overflow-auto">
-                  {/* <input
+                  <input
                     type="search"
                     className="w-1/2 mb-4 flex items-center  mx-auto border p-2 text-sm text-center"
                     value={data.assignTo}
                      name="assigTo"  onChange={(e)=>inputEvent(e)}
                     placeholder="Add task"
-                  /> */}
-                  {/* {
+                  />
+                 {
                     email
                       .filter((item) =>
-                        item.data().employemail.includes(assignTo)
+                        item.data().employemail.includes(data.assignTo)
                       )
                       .map((item) => {
                         return (
@@ -126,11 +126,12 @@ export default function TaskUpdationFrom(props) {
                             <div className="flex justify-between border-b p-2  ">
                               <h2
                                 className=""
-                                name='email'
-                                
-                                // onClick={(e) =>
-                                //   handleChange(e, item.data().employemail)
-                                // }
+                                onClick={(e) =>
+                                  setData((prevData) => ({
+                                    ...prevData,
+                                    assignTo: item.data().employemail,
+                                  }))
+                                }
                               >
                                 {item.data().employemail}
                               </h2>
@@ -138,13 +139,8 @@ export default function TaskUpdationFrom(props) {
                           </>
                         );
                       })
-                    // email.map(item=>{
-                    //   item.filter(item.data().employemail.includes('e').map(em=>{
-                    //     return <li> {em.data().employemail}</li>
-                    //   }))
-                    // return <li>{item.employemail}</li>
-                    // })
-                  } */}
+                   
+                  }
                 </div>
                 <button
                   type="submit"

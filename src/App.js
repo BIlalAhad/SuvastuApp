@@ -36,8 +36,47 @@ import WordpressCV from './Containers/WordpressCV'
 import Achivement from './Containers/Achivement'
 import Addachivement from './Containers/Addachivement'
 import { ToastContainer, toast } from 'react-toastify';
+import { useEffect } from 'react'
+import { UseFirebase } from './Context/Firebase'
+import { getToken } from 'firebase/messaging'
+// import {messagingInstance}
 
 function App() {
+  const firebase=UseFirebase();
+  console.log(firebase.messagingInstance)
+
+  useEffect(() => {
+    const requestPermission = async () => {
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+         const Token =await getToken(firebase.messagingInstance,{vapidKey: ' BN8qO0QHcZFy_q8_Vs6MnyLIAtvSmnlWJh-Mn7IBGv1LBSoaDkASCIdtt5_wmwte7sjmwh2Xvy9JZg2oOStrnoM '})
+         console.log(`TokenGenerated`, Token)
+          // generate Token
+        } else if (permission === 'denied') {
+          alert('Notification request is denied');
+        }
+      } catch (error) {
+        console.error('Error requesting notification permission:', error);
+      }
+    };
+
+    getToken(firebase.messagingInstance, { vapidKey: 'BN8qO0QHcZFy_q8_Vs6MnyLIAtvSmnlWJh-Mn7IBGv1LBSoaDkASCIdtt5_wmwte7sjmwh2Xvy9JZg2oOStrnoM ' }).then((currentToken) => {
+      if (currentToken) {
+        console.log(`TokenGenerated`, currentToken)
+        // ...
+      } else {
+        // Show permission request UI
+        console.log('No registration token available. Request permission to generate one.');
+        // ...
+      }
+    }).catch((err) => {
+      console.log('An error occurred while retrieving token. ', err);
+      // ...
+    });
+  
+    // requestPermission();
+  }, []);
   return (
     <>
       <BrowserRouter>

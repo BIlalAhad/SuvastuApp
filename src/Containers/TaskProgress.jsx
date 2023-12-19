@@ -12,6 +12,9 @@ import { ToastContainer, toast } from "react-toastify";
 import TaskListView from "../Components/TaskListView";
 import TaskUpdationFrom from "../Components/TaskUpdationFrom";
 import { RiDeleteBin5Fill } from "react-icons/ri";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
+// import { messagingInstance} from "firebase";
+// import { getMessaging, getToken } from "firebase/messaging";
 
 export default function TaskProgress() {
   const [data, setData] = useState([]);
@@ -183,6 +186,28 @@ export default function TaskProgress() {
     console.log(index, documentId, sectionId)
   };
 
+  // request user for notification permission
+
+ 
+  // const messaging = getMessaging();
+  // useEffect(() => {
+  //   const requestNotificationPermission = async () => {
+  //     try {
+  //       const permission = await Notification.requestPermission();
+  //       if (permission === 'granted') {
+  //         const deviceToken = getToken(messaging);
+  //         console.log(deviceToken);
+  //       } else {
+  //         console.log('Notification permission denied');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error requesting notification permission:', error);
+  //     }
+  //   };
+  
+  //   requestNotificationPermission();
+  // }, []);
+
   return (
     <>
       <section className="flex  backgroungimg">
@@ -192,6 +217,7 @@ export default function TaskProgress() {
             <div>
               <div className="flex items-center gap-10 text-gray-800">
                 <div className="px-8 py-4">
+                 
                   <h2 className="text-2xl font-semibold">
                     Project Name: {specificData.projectname}
                   </h2>
